@@ -1,0 +1,2 @@
+﻿  Source.cpp
+\\storage10.student.bth.se\students\20142\madg14\visual studio 2015\projects\osl\include\gl\glew.h(85): fatal error C1189: #error:  gl.h included before glew.h
