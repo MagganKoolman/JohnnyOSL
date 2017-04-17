@@ -119,14 +119,14 @@ void App::createCubeVBO()
 	glBindVertexArray(cubeVa);
 
 	vtxData points[8];
-	float pos[24] = { 1, 1, 1,
-					1, 1, -1,
-					1, -1, 1,
-					-1, 1, 1,
-					-1, -1, -1,
-					-1, -1, 1,
-					-1, 1, 1,
-					1, -1, -1 };
+	float pos[24] = { 0.5, 0.5, 0.5,
+					0.5, 0.5, -0.5,
+					0.5, -0.5, 0.5,
+					-0.5, 0.5, 0.5,
+					-0.5, -0.5, -0.5,
+					-0.5, -0.5, 0.5,
+					-0.5, 0.5, 0.5,
+					0.5, -0.5, -0.5 };
 	
 	for (int i = 0; i < 8; i++)
 	{
@@ -158,6 +158,10 @@ void App::createCubeVBO()
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(face) * 12, &vtxFaces, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vtxData), 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vtxData), (void*)offsetof(vtxData, x));
