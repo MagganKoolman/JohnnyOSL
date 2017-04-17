@@ -84,11 +84,14 @@ void Forward::init()
 		glDeleteShader(fragment);
 	}
 	int x = glGetError();
-	if (x == 0)
+	if (x != 0)
 		cout << "Error in forward program constructor, nr: " << x << endl;
 }
 
-void Forward::render()
+void Forward::render(GLuint va, int size)
 {
+	glUseProgram(this->programID);
+	glBindVertexArray(va);
 
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 }

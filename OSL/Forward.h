@@ -7,7 +7,7 @@ public:
 	Forward();
 	~Forward();
 	void init();
-	void render();
+	void render(GLuint va, int size);
 private:
 	GLuint programID;
 };

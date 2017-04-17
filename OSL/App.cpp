@@ -32,12 +32,16 @@ App::App() {
 
 	sphereSize = 0;
 	createSphereVBO(20);
-	oslstuff.init();
+	createCubeVBO();
+	//oslstuff.init();
 	forwardProgram.init();
+
 }
 App::~App(){
 
 }
+
+
 void App::createSphereVBO(int resolution)
 {
 	float increment = (3.1415 * 2)/resolution;
@@ -90,22 +94,91 @@ void App::createSphereVBO(int resolution)
 	GLuint vbo;
 	glGenVertexArrays(1, &sphereVa);
 	glBindVertexArray(sphereVa);
-	
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(face)* faceData.size(), faceData.data(), GL_STATIC_DRAW);
 
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vtxData), 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vtxData), (void*)offsetof(vtxData, x));
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vtxData), (void*)offsetof(vtxData, u));
 
-	//delete faceData;
-	//delete data;
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 }
+
+
+void App::createCubeVBO()
+{
+	GLuint vbo;
+	glGenVertexArrays(1, &cubeVa);
+	glBindVertexArray(cubeVa);
+
+	vtxData points[8];
+	float pos[24] = { 1, 1, 1,
+					1, 1, -1,
+					1, -1, 1,
+					-1, 1, 1,
+					-1, -1, -1,
+					-1, -1, 1,
+					-1, 1, 1,
+					1, -1, -1 };
+	
+	for (int i = 0; i < 8; i++)
+	{
+		points[i].a = pos[3*i];
+		points[i].b = pos[3*i + 1];
+		points[i].c = pos[3*i + 2];
+
+		points[i].x = pos[3 * i];
+		points[i].y = pos[3 * i + 1];
+		points[i].z = pos[3 * i + 2];
+
+		points[i].u = 1;
+		points[i].v = 1;
+	}
+	face vtxFaces[12] = { {points[0], points[1], points[2] },
+						{ points[1], points[2], points[7] },
+						{ points[2], points[4], points[7] },
+						{ points[2], points[4], points[5] },
+						{ points[4], points[5], points[6] },
+						{ points[3], points[5], points[6] },
+						{ points[0], points[1], points[6] },
+						{ points[0], points[3], points[6] },
+						{ points[1], points[6], points[4] },
+						{ points[1], points[7], points[4] },
+						{ points[0], points[3], points[5] },
+						{ points[0], points[2], points[5] }
+	};
+	
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(face) * 12, &vtxFaces, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vtxData), 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vtxData), (void*)offsetof(vtxData, x));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vtxData), (void*)offsetof(vtxData, u));
+}
+
+void App::run() {
+	glClearColor(1.0, 0.0, 1.0, 1.0);
+	while(!glfwWindowShouldClose(w)){
+		glClear(GL_COLOR_BUFFER_BIT);
+		glfwPollEvents();
+		//oslstuff.render(sphereVa, sphereSize);
+		forwardProgram.render(cubeVa, sphereSize);
+		glfwSwapBuffers(w);
+		int a = glGetError();
+		if (a) {
+			std::cout << glewGetErrorString(a) << std::endl;
+		}
+	}
+}
+
 void GLAPIENTRY gl_callback(GLenum source, GLenum type, GLuint id,
 	GLenum severity, GLsizei length,
 	const GLchar *message, const void *userParam)
@@ -193,19 +266,5 @@ void GLAPIENTRY gl_callback(GLenum source, GLenum type, GLuint id,
 		(int)type, stype,
 		(int)source, ssource,
 		id, length, message
-		);
-}
-void App::run() {
-	glClearColor(1.0, 0.0, 1.0, 1.0);
-	while(!glfwWindowShouldClose(w)){
-		glClear(GL_COLOR_BUFFER_BIT);
-		glfwPollEvents();
-		//oslstuff.render(sphereVa, sphereSize);
-		forwardProgram.render();
-		glfwSwapBuffers(w);
-		int a = glGetError();
-		if (a) {
-			std::cout << glewGetErrorString(a) << std::endl;
-		}
-	}
+	);
 }

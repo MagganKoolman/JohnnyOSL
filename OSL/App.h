@@ -14,6 +14,7 @@ struct face {
 private:
 	int sphereSize;
 	GLuint sphereVa;
+	GLuint cubeVa;
 	osl oslstuff;
 	Forward forwardProgram;
 	GLFWwindow* w;
@@ -22,4 +23,5 @@ public:
 	~App();
 	void run();
 	void createSphereVBO(int resolution);
+	void createCubeVBO();
 };

@@ -4,8 +4,8 @@ in vec3 position;
 in vec3 normal;
 in vec2 uv;
 
-flat out vec3 positionOut;
-flat out vec3 normalOut;
+out vec3 positionOut;
+out vec3 normalOut;
 out vec2 uvOut;
 
 void main(){
