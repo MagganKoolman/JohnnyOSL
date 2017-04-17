@@ -153,14 +153,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Forward.cpp" />
     <ClCompile Include="osl.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="Forward.h" />
     <ClInclude Include="osl.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="forward.frag.glsl" />
+    <None Include="forward.vert.glsl" />
     <None Include="oslShader.comp.glsl" />
     <None Include="textureGen.frag.glsl" />
     <None Include="textureGen.vert.glsl" />

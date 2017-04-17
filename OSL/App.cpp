@@ -33,7 +33,7 @@ App::App() {
 	sphereSize = 0;
 	createSphereVBO(20);
 	oslstuff.init();
-
+	forwardProgram.init();
 }
 App::~App(){
 
@@ -200,7 +200,8 @@ void App::run() {
 	while(!glfwWindowShouldClose(w)){
 		glClear(GL_COLOR_BUFFER_BIT);
 		glfwPollEvents();
-		oslstuff.render(sphereVa, sphereSize);
+		//oslstuff.render(sphereVa, sphereSize);
+		forwardProgram.render();
 		glfwSwapBuffers(w);
 		int a = glGetError();
 		if (a) {

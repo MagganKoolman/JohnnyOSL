@@ -24,12 +24,18 @@
     <ClCompile Include="osl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Forward.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="osl.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Forward.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,6 +47,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="oslShader.comp.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="forward.frag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="forward.vert.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
