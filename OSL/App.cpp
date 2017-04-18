@@ -10,11 +10,46 @@
 void GLAPIENTRY gl_callback(GLenum source, GLenum type, GLuint id,
 	GLenum severity, GLsizei length,
 	const GLchar *message, const void *userParam);
+int move;
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (action == GLFW_PRESS)
+	{
+		if (key == GLFW_KEY_W)
+			move = 1;
+		if (key == GLFW_KEY_S)
+			move = 2;
+		if (key == GLFW_KEY_A)
+			move = 3;
+		if (key == GLFW_KEY_D)
+			move = 4;
+	}
+	if (action == GLFW_RELEASE)
+	{
+		move = 0;
+	}
+}
+
+/*void inputUpdate() {
+if (upDown)
+scale = scale * 1.01;
+if (downDown)
+scale = scale / 1.01;
+float movement = 0.002 * 1 / scale;
+if (wDown)
+pos.y -= movement;
+if (sDown)
+pos.y += movement;
+if (aDown)
+pos.x += movement;
+if (dDown)
+pos.x -= movement;
+}*/
 
 App::App() {
 	glfwInit();
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-	w = glfwCreateWindow(800, 800, "OSL", NULL, NULL);
+	w = glfwCreateWindow(Camera::SCREEN_WIDTH, Camera::SCREEN_HEIGHT, "OSL", NULL, NULL);
 	glfwMakeContextCurrent(w);
 	int error = glewInit();
 
@@ -29,6 +64,8 @@ App::App() {
 		nullptr,
 		GL_TRUE
 		);
+	glEnable(GL_DEPTH_TEST);
+	glfwSetKeyCallback(w, key_callback);
 
 	sphereSize = 0;
 	createSphereVBO(20);
@@ -171,10 +208,13 @@ void App::createCubeVBO()
 void App::run() {
 	glClearColor(1.0, 0.0, 1.0, 1.0);
 	while(!glfwWindowShouldClose(w)){
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glfwPollEvents();
+		
+		camera.update();
+		camera.move(move);
 		//oslstuff.render(sphereVa, sphereSize);
-		forwardProgram.render(cubeVa, sphereSize);
+		forwardProgram.render(cubeVa, camera.getViewProjection());
 		glfwSwapBuffers(w);
 		int a = glGetError();
 		if (a) {

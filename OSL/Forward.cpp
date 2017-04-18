@@ -88,9 +88,12 @@ void Forward::init()
 		cout << "Error in forward program constructor, nr: " << x << endl;
 }
 
-void Forward::render(GLuint va, int size)
+void Forward::render(GLuint va, glm::mat4 viewProj)
 {
 	glUseProgram(this->programID);
+	GLint loc = glGetUniformLocation(this->programID, "viewProjection");
+	glUniformMatrix4fv(loc, 1, GL_FALSE, &viewProj[0][0]);
+
 	glBindVertexArray(va);
 
 	glDrawArrays(GL_TRIANGLES, 0, 36);

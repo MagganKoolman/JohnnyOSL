@@ -8,9 +8,10 @@ out vec3 positionOut;
 out vec3 normalOut;
 out vec2 uvOut;
 
+uniform mat4 viewProjection;
+
 void main(){
-	gl_Position = vec4(position, 1);
-	positionOut = position;
+	gl_Position = viewProjection * mat4(1) * vec4(position, 1);
 	normalOut = normal;
 	uvOut = uv;
 }
