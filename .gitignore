@@ -1,4 +1,5 @@
-*.suo
-*.db
-.vs
-OSL.VC.opendb
+*
+!OSL/*.cpp
+!OSL/*.h
+!OSL/*.png
+!OSL/*.glsl
