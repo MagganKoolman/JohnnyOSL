@@ -1,5 +1,7 @@
 #pragma once
 #include "osl.h"
+#include "Forward.h"
+#include "Camera.h"
 #include "GL\glew.h"
 #include "GLFW\glfw3.h"
 
@@ -13,11 +15,15 @@ struct face {
 private:
 	int sphereSize;
 	GLuint sphereVa;
+	GLuint cubeVa;
 	osl oslstuff;
+	Forward forwardProgram;
 	GLFWwindow* w;
+	Camera camera;
 public:
 	App();
 	~App();
 	void run();
 	void createSphereVBO(int resolution);
+	void createCubeVBO();
 };
