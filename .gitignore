@@ -1,6 +1,4 @@
 *.suo
 *.db
 .vs
-*.obj
-Debug/*
-x64/*
+OSL.VC.opendb

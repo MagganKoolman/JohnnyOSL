@@ -1,0 +1,4 @@
+*.suo
+*.db
+.vs
+OSL.VC.opendb

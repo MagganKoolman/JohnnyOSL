@@ -1,0 +1,6 @@
+*.suo
+*.db
+.vs
+*.obj
+Debug/*
+x64/*
