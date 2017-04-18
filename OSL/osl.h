@@ -9,8 +9,8 @@ struct oslObject{
 	GLuint positionTex, normalTex, diffuseTex;
 };
 public:
-	const int textureRes = 32;
-	GLuint oslprog, textureGenProg;
+	const int textureRes = 64;
+	GLuint oslprog, textureGenProg, oslForward;
 	oslObject sphere, cube;
 
 public:

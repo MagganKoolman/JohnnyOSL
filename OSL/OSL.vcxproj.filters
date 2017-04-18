@@ -15,13 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="osl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -34,13 +34,19 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="textureGen.vert.glsl">
+    <None Include="oslShader.comp.glsl">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="textureGen.frag.glsl">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="oslShader.comp.glsl">
+    <None Include="textureGen.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="oslForward.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="oslForward.frag.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

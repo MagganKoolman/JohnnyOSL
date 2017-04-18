@@ -23,7 +23,7 @@ App::App() {
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(gl_callback, nullptr);
 	glDebugMessageControl(GL_DONT_CARE,
-		GL_DONT_CARE,
+		GL_DONT_CARE,	
 		GL_DONT_CARE,
 		0,
 		nullptr,
@@ -57,8 +57,8 @@ void App::createSphereVBO(int resolution)
 										x,//normals
 										y,
 										z,
-										(float)j/resolution, //uvs
-										(float)i/resolution
+										(float)j/(resolution-1), //uvs
+										(float)i/(resolution/2-1)
 			};
 		}
 	}
@@ -196,9 +196,11 @@ void GLAPIENTRY gl_callback(GLenum source, GLenum type, GLuint id,
 		);
 }
 void App::run() {
+	
 	glClearColor(1.0, 0.0, 1.0, 1.0);
+	oslstuff.generateTextures(sphereVa, sphereSize);
 	while(!glfwWindowShouldClose(w)){
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glfwPollEvents();
 		oslstuff.render(sphereVa, sphereSize);
 		glfwSwapBuffers(w);
