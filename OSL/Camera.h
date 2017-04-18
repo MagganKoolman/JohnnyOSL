@@ -9,7 +9,7 @@ class Camera {
 public:
 	Camera();
 	~Camera();
-	void update();
+	void update(double xpos, double ypos, float dt);
 	glm::mat4 getViewProjection();
 	static const int SCREEN_WIDTH = 800;
 	static const int SCREEN_HEIGHT = 800;
@@ -18,9 +18,8 @@ public:
 	void move(int direction);
 private:
 	vec3 cameraPos;
-	vec3 cameraFront;
+	vec3 cameraDir;
 	vec3 cameraRight;
 	mat4 view;
 	mat4 projection;
-	mat4 viewProjection;
 };

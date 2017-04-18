@@ -10,7 +10,10 @@
 void GLAPIENTRY gl_callback(GLenum source, GLenum type, GLuint id,
 	GLenum severity, GLsizei length,
 	const GLchar *message, const void *userParam);
+
 int move;
+bool running;
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (action == GLFW_PRESS)
@@ -23,6 +26,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			move = 3;
 		if (key == GLFW_KEY_D)
 			move = 4;
+		if (key == GLFW_KEY_ESCAPE)
+			running = false;
 	}
 	if (action == GLFW_RELEASE)
 	{
@@ -52,7 +57,7 @@ App::App() {
 	w = glfwCreateWindow(Camera::SCREEN_WIDTH, Camera::SCREEN_HEIGHT, "OSL", NULL, NULL);
 	glfwMakeContextCurrent(w);
 	int error = glewInit();
-
+	running = true;
 	if (error)
 		std::cout << ((char*)glewGetErrorString(error));
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -66,13 +71,14 @@ App::App() {
 		);
 	glEnable(GL_DEPTH_TEST);
 	glfwSetKeyCallback(w, key_callback);
+	glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 
 	sphereSize = 0;
 	createSphereVBO(20);
 	createCubeVBO();
 	//oslstuff.init();
 	forwardProgram.init();
-
 }
 App::~App(){
 
@@ -207,11 +213,20 @@ void App::createCubeVBO()
 
 void App::run() {
 	glClearColor(1.0, 0.0, 1.0, 1.0);
-	while(!glfwWindowShouldClose(w)){
+	double xpos, ypos, lastx, lasty;
+	glfwGetCursorPos(w, &lastx, &lasty);
+	double time, dt; //glfwGetTime();
+	time = 0.0;
+	glfwSetTime(time);
+	while(!glfwWindowShouldClose(w) && running){
+		dt = glfwGetTime() - time;	
+		time = glfwGetTime();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glfwPollEvents();
-		
-		camera.update();
+		glfwPollEvents();	
+		glfwGetCursorPos(w, &xpos, &ypos);
+		camera.update(lastx - xpos, lasty - ypos, dt);
+		lastx = xpos;
+		lasty = ypos;
 		camera.move(move);
 		//oslstuff.render(sphereVa, sphereSize);
 		forwardProgram.render(cubeVa, camera.getViewProjection());
@@ -220,6 +235,7 @@ void App::run() {
 		if (a) {
 			std::cout << glewGetErrorString(a) << std::endl;
 		}
+		std::cout << dt << std::endl;
 	}
 }
 

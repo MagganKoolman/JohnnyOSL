@@ -1,3 +1,4 @@
 ﻿  Camera.cpp
+c:\users\maggan\documents\visual studio 2017\projects\osl\osl\camera.cpp(21): warning C4305: '*=': truncation from 'double' to 'float'
   OSL.vcxproj -> C:\Users\Maggan\Documents\Visual Studio 2017\Projects\OSL\x64\Debug\OSL.exe
   OSL.vcxproj -> C:\Users\Maggan\Documents\Visual Studio 2017\Projects\OSL\x64\Debug\OSL.pdb (Partial PDB)
