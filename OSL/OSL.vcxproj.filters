@@ -24,10 +24,10 @@
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
+    <ClCompile Include="Forward.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Forward.cpp">
+    <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,10 +38,10 @@
     <ClInclude Include="osl.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
+    <ClInclude Include="Forward.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Forward.h">
+    <ClInclude Include="Camera.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -61,11 +61,7 @@
     <None Include="oslForward.frag.glsl">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="forward.frag.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="forward.vert.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
+    <None Include="forward.frag.glsl" />
+    <None Include="forward.vert.glsl" />
   </ItemGroup>
 </Project>

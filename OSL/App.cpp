@@ -198,17 +198,37 @@ GLuint App::createCubeVBO()
 
 void App::createCubes()
 {
-	for (int i = 0; i < 3; i++)
+	int index = 0;
+	for (int i = 0; i < 13; i++)
 	{
-		cubeMatrices[i] = glm::translate(glm::mat4(1), glm::vec3(i * 2, 0, 0));	
+		for (int j = 0; j < 13; j++) {
+			cubeMatrices[index++] = glm::translate(glm::mat4(1), glm::vec3(i *2* 2, -2, j*2*2));
+		}
+	}
+
+	for (int i = 0; i < 12; i++)
+	{
+		for (int j = 0; j < 12; j++) {
+			cubeMatrices[index++] = glm::translate(glm::mat4(1), glm::vec3(i *2* 2, 2, (j*2+1) * 2));
+		}
 	}
 }
 
 void App::createSpheres()
 {
-	for (int i = 0; i < 3; i++)
+	int index = 0;
+	for (int i = 0; i < 13; i++)
 	{
-		sphereMatrices[i] = glm::translate(glm::mat4(1), glm::vec3(0, i * 2, 0));
+		for (int j = 0; j < 13; j ++) {
+			sphereMatrices[index++] = glm::translate(glm::mat4(1), glm::vec3(i*2*2, -2, (j*2+1)*2));
+		}
+	}
+
+	for (int i = 0; i < 12; i++)
+	{
+		for (int j = 0; j < 12; j ++) {
+			sphereMatrices[index++] = glm::translate(glm::mat4(1), glm::vec3(i * 2*2, 2, j *2* 2));
+		}
 	}
 }
 
@@ -228,7 +248,7 @@ void App::run() {
 		camera.update(lastx - xpos, lasty - ypos, dt);
 		lastx = xpos;
 		lasty = ypos;
-		camera.move(move);
+		camera.move(move, dt);
 		//oslstuff.render(sphereVa, sphereSize);
 		forwardProgram.render(cubeVa, camera.getViewProjection());
 		glfwSwapBuffers(w);
