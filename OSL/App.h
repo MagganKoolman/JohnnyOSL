@@ -27,8 +27,8 @@ private:
 	Forward forwardProgram;
 	GLFWwindow* w;
 	Camera camera;
-	glm::mat4 cubeMatrices[3];
-	glm::mat4 sphereMatrices[3];
+	glm::mat4 cubeMatrices[25*25];
+	glm::mat4 sphereMatrices[25*25];
 public:
 	App();
 	~App();

@@ -61,5 +61,7 @@
     <None Include="oslForward.frag.glsl">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="forward.frag.glsl" />
+    <None Include="forward.vert.glsl" />
   </ItemGroup>
 </Project>

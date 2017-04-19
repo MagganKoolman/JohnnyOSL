@@ -20,8 +20,8 @@ Camera::~Camera()
 void Camera::update(double xpos, double ypos, float dt)
 {
 	dt *= 0.1;
-	this->cameraDir +=  this->cameraRight * (float)xpos * dt;
-	this->cameraDir.y += (float)ypos * dt;
+	this->cameraDir +=  this->cameraRight * (float)xpos / 400.f;
+	this->cameraDir.y += (float)ypos /400.f;
 	this->cameraDir = normalize(cameraDir);
 	this->cameraRight = cross(vec3(0.0, 1.0, 0.0), this->cameraDir);
 	this->view = glm::lookAt(this->cameraPos,
@@ -34,23 +34,23 @@ glm::mat4 Camera::getViewProjection()
 	return this->projection * this->view;
 }
 
-void Camera::move(int direction)
+void Camera::move(int direction, float dt)
 {
 	switch (direction)
 	{
 	case 0:
 		break;
 	case 1:
-		this->cameraPos += this->cameraDir * 0.1f;
+		this->cameraPos += this->cameraDir * 10.f* dt;
 		break;
 	case 2:
-		this->cameraPos -= this->cameraDir * 0.1f;
+		this->cameraPos -= this->cameraDir *10.f* dt;
 		break;
 	case 3:
-		this->cameraPos += this->cameraRight * 0.1f;
+		this->cameraPos += this->cameraRight *10.f* dt;
 		break;
 	case 4:
-		this->cameraPos -= this->cameraRight * 0.1f;
+		this->cameraPos -= this->cameraRight *10.f* dt;
 		break;
 	}
 }
