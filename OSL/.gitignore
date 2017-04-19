@@ -1,9 +1,0 @@
-*.opendb
-Debug/*
-*.suo
-*.filters
-*
-!OSL/*.cpp
-!OSL/*.h
-!OSL/*.png
-!OSL/*.glsl
