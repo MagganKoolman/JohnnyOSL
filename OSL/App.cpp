@@ -4,6 +4,7 @@
 #include <vector>
 #include <cassert>
 #include <set>
+#include <glm/gtc/matrix_transform.hpp>
 
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
@@ -11,34 +12,70 @@ void GLAPIENTRY gl_callback(GLenum source, GLenum type, GLuint id,
 	GLenum severity, GLsizei length,
 	const GLchar *message, const void *userParam);
 
+int move;
+bool running;
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (action == GLFW_PRESS)
+	{
+		if (key == GLFW_KEY_W)
+			move = 1;
+		if (key == GLFW_KEY_S)
+			move = 2;
+		if (key == GLFW_KEY_A)
+			move = 3;
+		if (key == GLFW_KEY_D)
+			move = 4;
+		if (key == GLFW_KEY_ESCAPE)
+			running = false;
+	}
+	if (action == GLFW_RELEASE)
+	{
+		move = 0;
+	}
+}
+
 App::App() {
 	glfwInit();
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-	w = glfwCreateWindow(800, 800, "OSL", NULL, NULL);
+	w = glfwCreateWindow(Camera::SCREEN_WIDTH, Camera::SCREEN_HEIGHT, "OSL", NULL, NULL);
 	glfwMakeContextCurrent(w);
 	int error = glewInit();
-
+	running = true;
 	if (error)
 		std::cout << ((char*)glewGetErrorString(error));
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(gl_callback, nullptr);
 	glDebugMessageControl(GL_DONT_CARE,
-		GL_DONT_CARE,	
+		GL_DONT_CARE,
 		GL_DONT_CARE,
 		0,
 		nullptr,
 		GL_TRUE
 		);
+	glEnable(GL_DEPTH_TEST);
+	glfwSetKeyCallback(w, key_callback);
+	glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 
 	sphereSize = 0;
-	createSphereVBO(20);
-	oslstuff.init();
+	forwardProgram.sphereVao = createSphereVBO(20);
+	createSpheres();
+	forwardProgram.spheres = sphereMatrices;
 
+	forwardProgram.cubeVao = createCubeVBO();
+	createCubes();
+	forwardProgram.cubes = cubeMatrices;
+
+	forwardProgram.init();
 }
 App::~App(){
 
 }
-void App::createSphereVBO(int resolution)
+
+
+GLuint App::createSphereVBO(int resolution)
 {
 	float increment = (3.1415 * 2)/resolution;
 	std::vector<vtxData> data;
@@ -57,8 +94,8 @@ void App::createSphereVBO(int resolution)
 										x,//normals
 										y,
 										z,
-										(float)j/(resolution-1), //uvs
-										(float)i/(resolution/2-1)
+										(float)j/resolution, //uvs
+										(float)i/resolution
 			};
 		}
 	}
@@ -78,34 +115,130 @@ void App::createSphereVBO(int resolution)
 			faceData[index + 1] = { data[b],data[c],data[d] }; //winding order(???)
 			sphereSize += 6;
 		}
-		/*int a = i*newRes + newRes;
-		int b = i*newRes;
-		int c = (i+1)*newRes + newRes;
-		int d = (i+1)*newRes;
-		int index = 2 * (i*newRes + newRes-2);
-		faceData[index] = { data[a],data[b],data[c] }; //winding order(?)
-		faceData[index + 1] = { data[b],data[c],data[d] }; //winding order(???)
-		sphereSize += 6;*/
 	}
 	GLuint vbo;
 	glGenVertexArrays(1, &sphereVa);
 	glBindVertexArray(sphereVa);
-	
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(face)* faceData.size(), faceData.data(), GL_STATIC_DRAW);
 
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vtxData), 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vtxData), (void*)offsetof(vtxData, x));
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vtxData), (void*)offsetof(vtxData, u));
 
-	//delete faceData;
-	//delete data;
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+	return sphereVa;
 }
+
+
+GLuint App::createCubeVBO()
+{
+	GLuint vbo;
+	glGenVertexArrays(1, &cubeVa);
+	glBindVertexArray(cubeVa);
+	//Vertices
+	glm::vec3 pos[8] = { {0.5, 0.5, 0.5},
+						{0.5, 0.5, -0.5},
+						{0.5, -0.5, 0.5},
+						{0.5, -0.5, -0.5},
+						{-0.5, 0.5, 0.5},
+						{-0.5, 0.5, -0.5},
+						{-0.5, -0.5, 0.5},
+						{-0.5, -0.5, -0.5}
+	};
+	//Normals
+	glm::vec3 norm[6] =
+	{
+		{ 0.0, 0.0, -1.0 },
+		{ 0.0, 1.0, 0.0 },
+		{ 0.0, 0.0, 1.0 },
+		{ 0.0, -1.0, 0.0 },
+		{ 1.0, 0.0, 0.0 },
+		{ -1.0, 0.0, 0.0 }
+	};
+	//Faces
+	betterFace faces[12] = { { { pos[0], norm[4] }, { pos[1], norm[4] }, { pos[2], norm[4] } },
+							{ { pos[1], norm[4] }, { pos[3], norm[4] }, { pos[2], norm[4] } },
+
+							{ { pos[1], norm[1] },{ pos[0], norm[1] },{ pos[4], norm[1] }} ,
+							{ { pos[1], norm[1] },{ pos[4], norm[1] },{ pos[5], norm[1] }} ,
+							 															 
+							{ { pos[4], norm[5] },{ pos[7], norm[5] },{ pos[5], norm[5] }} ,
+							{ { pos[4], norm[5] },{ pos[6], norm[5] },{ pos[7], norm[5] }} ,
+							 															 
+							{ { pos[2], norm[3] },{ pos[3], norm[3] },{ pos[6], norm[3] }} ,
+							{ { pos[3], norm[3] },{ pos[7], norm[3] },{ pos[6], norm[3] }} ,
+							 															 
+							{ { pos[0], norm[2] },{ pos[6], norm[2] },{ pos[2], norm[2] }} ,
+							{ { pos[0], norm[2] },{ pos[4], norm[2] },{ pos[6], norm[2] }} ,
+																						 
+							{ { pos[1], norm[0] },{ pos[5], norm[0] },{ pos[7], norm[0] }} ,
+							{ { pos[1], norm[0] },{ pos[7], norm[0] },{ pos[3], norm[0] }}
+	
+	};			
+
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(betterFace) * 12, &faces, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(betterData), 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(betterData), (void*)offsetof(betterData, normals));
+	return cubeVa;
+}
+
+void App::createCubes()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		cubeMatrices[i] = glm::translate(glm::mat4(1), glm::vec3(i * 2, 0, 0));	
+	}
+}
+
+void App::createSpheres()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		sphereMatrices[i] = glm::translate(glm::mat4(1), glm::vec3(0, i * 2, 0));
+	}
+}
+
+void App::run() {
+	glClearColor(1.0, 0.0, 1.0, 1.0);
+	double xpos, ypos, lastx, lasty;
+	glfwGetCursorPos(w, &lastx, &lasty);
+	double time, dt; //glfwGetTime();
+	time = 0.0;
+	glfwSetTime(time);
+	while(!glfwWindowShouldClose(w) && running){
+		dt = glfwGetTime() - time;	
+		time = glfwGetTime();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glfwPollEvents();	
+		glfwGetCursorPos(w, &xpos, &ypos);
+		camera.update(lastx - xpos, lasty - ypos, dt);
+		lastx = xpos;
+		lasty = ypos;
+		camera.move(move);
+		//oslstuff.render(sphereVa, sphereSize);
+		forwardProgram.render(cubeVa, camera.getViewProjection());
+		glfwSwapBuffers(w);
+		int a = glGetError();
+		if (a) {
+			std::cout << glewGetErrorString(a) << std::endl;
+		}
+	}
+}
+
 void GLAPIENTRY gl_callback(GLenum source, GLenum type, GLuint id,
 	GLenum severity, GLsizei length,
 	const GLchar *message, const void *userParam)
@@ -193,20 +326,5 @@ void GLAPIENTRY gl_callback(GLenum source, GLenum type, GLuint id,
 		(int)type, stype,
 		(int)source, ssource,
 		id, length, message
-		);
-}
-void App::run() {
-	
-	glClearColor(1.0, 0.0, 1.0, 1.0);
-	oslstuff.generateTextures(sphereVa, sphereSize);
-	while(!glfwWindowShouldClose(w)){
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glfwPollEvents();
-		oslstuff.render(sphereVa, sphereSize);
-		glfwSwapBuffers(w);
-		int a = glGetError();
-		if (a) {
-			std::cout << glewGetErrorString(a) << std::endl;
-		}
-	}
+	);
 }

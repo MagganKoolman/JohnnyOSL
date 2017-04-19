@@ -1,13 +1,14 @@
 #include "Camera.h"
+#include <iostream>
 
 Camera::Camera()
 {
 	this->cameraPos = { 0.0, 0.0, 10.0 };
-	this->cameraFront = { 0.0, 0.0, -1.0 };
-	this->cameraRight = cross(vec3(0.0, 1.0, 0.0), this->cameraFront);
+	this->cameraDir = { 0.0, 0.0, -1.0 };
+	this->cameraRight = cross(vec3(0.0, 1.0, 0.0), this->cameraDir);
 
 	this->view = glm::lookAt(this->cameraPos,
-		this->cameraPos + this->cameraFront,
+		this->cameraPos + this->cameraDir,
 		glm::vec3(0.0, 1.0, 0.0));
 	this->projection = glm::perspective(45.f, (float) SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.f);
 }
@@ -16,12 +17,16 @@ Camera::~Camera()
 {
 }
 
-
-void Camera::update()
+void Camera::update(double xpos, double ypos, float dt)
 {
+	dt *= 0.1;
+	this->cameraDir +=  this->cameraRight * (float)xpos * dt;
+	this->cameraDir.y += (float)ypos * dt;
+	this->cameraDir = normalize(cameraDir);
+	this->cameraRight = cross(vec3(0.0, 1.0, 0.0), this->cameraDir);
 	this->view = glm::lookAt(this->cameraPos,
-		this->cameraPos + this->cameraFront,
-		glm::vec3(0.0, 1.0, 0.0));
+		this->cameraPos + this->cameraDir,
+		glm::vec3(0.0, 1.0, 0.0));	
 }
 
 glm::mat4 Camera::getViewProjection()
@@ -36,10 +41,10 @@ void Camera::move(int direction)
 	case 0:
 		break;
 	case 1:
-		this->cameraPos += this->cameraFront * 0.1f;
+		this->cameraPos += this->cameraDir * 0.1f;
 		break;
 	case 2:
-		this->cameraPos -= this->cameraFront * 0.1f;
+		this->cameraPos -= this->cameraDir * 0.1f;
 		break;
 	case 3:
 		this->cameraPos += this->cameraRight * 0.1f;
@@ -49,3 +54,4 @@ void Camera::move(int direction)
 		break;
 	}
 }
+

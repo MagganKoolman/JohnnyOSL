@@ -1,4 +1,9 @@
+*.opendb
+Debug/*
 *.suo
-*.db
-.vs
-OSL.VC.opendb
+*.filters
+*
+!OSL/*.cpp
+!OSL/*.h
+!OSL/*.png
+!OSL/*.glsl

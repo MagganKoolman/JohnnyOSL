@@ -12,6 +12,13 @@ struct vtxData{
 struct face {
 	vtxData a, b, c;
 };
+struct betterData {
+	glm::vec3 pos, normals;
+};
+struct betterFace {
+	betterData f1, f2, f3;
+};
+
 private:
 	int sphereSize;
 	GLuint sphereVa;
@@ -20,10 +27,14 @@ private:
 	Forward forwardProgram;
 	GLFWwindow* w;
 	Camera camera;
+	glm::mat4 cubeMatrices[3];
+	glm::mat4 sphereMatrices[3];
 public:
 	App();
 	~App();
 	void run();
-	void createSphereVBO(int resolution);
-	void createCubeVBO();
+	GLuint createSphereVBO(int resolution);
+	GLuint createCubeVBO();
+	void createCubes();
+	void createSpheres();
 };
