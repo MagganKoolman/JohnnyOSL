@@ -2,8 +2,12 @@
 Debug/*
 *.suo
 *.filters
-*
 !OSL/*.cpp
 !OSL/*.h
 !OSL/*.png
 !OSL/*.glsl
+*.ilk
+*.obj
+*.tlog
+*.exe
+*.pdb
