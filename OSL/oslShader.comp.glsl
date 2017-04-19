@@ -14,8 +14,8 @@ void main(){
 	vec3 normal = imageLoad(normalTex, storePos).xyz;
 	vec4 color = imageLoad(destTex, storePos);
 	vec3 lightvec = lightPos - pos;
-	vec3 diffuse = dot(normal, lightvec)* vec3(1,0,0);
-	vec3 specular = dot(camPos - pos, reflect(lightvec, normal)) * vec3(1,0,0);
-	color = vec4(diffuse, color.w);
+	vec3 diffuse = abs(dot(normal, lightvec))* vec3(1,0,0);
+	vec3 specular = abs(dot(camPos - pos, reflect(lightvec, normal))) * vec3(1,0,0);
+	color = vec4(diffuse+specular, 1);
 	imageStore(destTex, storePos, color);
 }
