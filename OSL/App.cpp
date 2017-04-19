@@ -4,6 +4,7 @@
 #include <vector>
 #include <cassert>
 #include <set>
+#include <glm/gtc/matrix_transform.hpp>
 
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
@@ -35,22 +36,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 }
 
-/*void inputUpdate() {
-if (upDown)
-scale = scale * 1.01;
-if (downDown)
-scale = scale / 1.01;
-float movement = 0.002 * 1 / scale;
-if (wDown)
-pos.y -= movement;
-if (sDown)
-pos.y += movement;
-if (aDown)
-pos.x += movement;
-if (dDown)
-pos.x -= movement;
-}*/
-
 App::App() {
 	glfwInit();
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
@@ -75,9 +60,14 @@ App::App() {
 
 
 	sphereSize = 0;
-	createSphereVBO(20);
-	createCubeVBO();
-	//oslstuff.init();
+	forwardProgram.sphereVao = createSphereVBO(20);
+	createSpheres();
+	forwardProgram.spheres = sphereMatrices;
+
+	forwardProgram.cubeVao = createCubeVBO();
+	createCubes();
+	forwardProgram.cubes = cubeMatrices;
+
 	forwardProgram.init();
 }
 App::~App(){
@@ -85,7 +75,7 @@ App::~App(){
 }
 
 
-void App::createSphereVBO(int resolution)
+GLuint App::createSphereVBO(int resolution)
 {
 	float increment = (3.1415 * 2)/resolution;
 	std::vector<vtxData> data;
@@ -125,14 +115,6 @@ void App::createSphereVBO(int resolution)
 			faceData[index + 1] = { data[b],data[c],data[d] }; //winding order(???)
 			sphereSize += 6;
 		}
-		/*int a = i*newRes + newRes;
-		int b = i*newRes;
-		int c = (i+1)*newRes + newRes;
-		int d = (i+1)*newRes;
-		int index = 2 * (i*newRes + newRes-2);
-		faceData[index] = { data[a],data[b],data[c] }; //winding order(?)
-		faceData[index + 1] = { data[b],data[c],data[d] }; //winding order(???)
-		sphereSize += 6;*/
 	}
 	GLuint vbo;
 	glGenVertexArrays(1, &sphereVa);
@@ -152,63 +134,82 @@ void App::createSphereVBO(int resolution)
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+	return sphereVa;
 }
 
 
-void App::createCubeVBO()
+GLuint App::createCubeVBO()
 {
 	GLuint vbo;
 	glGenVertexArrays(1, &cubeVa);
 	glBindVertexArray(cubeVa);
-
-	vtxData points[8];
-	float pos[24] = { 0.5, 0.5, 0.5,
-					0.5, 0.5, -0.5,
-					0.5, -0.5, 0.5,
-					-0.5, 0.5, 0.5,
-					-0.5, -0.5, -0.5,
-					-0.5, -0.5, 0.5,
-					-0.5, 0.5, 0.5,
-					0.5, -0.5, -0.5 };
-	
-	for (int i = 0; i < 8; i++)
-	{
-		points[i].a = pos[3*i];
-		points[i].b = pos[3*i + 1];
-		points[i].c = pos[3*i + 2];
-
-		points[i].x = pos[3 * i];
-		points[i].y = pos[3 * i + 1];
-		points[i].z = pos[3 * i + 2];
-
-		points[i].u = 1;
-		points[i].v = 1;
-	}
-	face vtxFaces[12] = { {points[0], points[1], points[2] },
-						{ points[1], points[2], points[7] },
-						{ points[2], points[4], points[7] },
-						{ points[2], points[4], points[5] },
-						{ points[4], points[5], points[6] },
-						{ points[3], points[5], points[6] },
-						{ points[0], points[1], points[6] },
-						{ points[0], points[3], points[6] },
-						{ points[1], points[6], points[4] },
-						{ points[1], points[7], points[4] },
-						{ points[0], points[3], points[5] },
-						{ points[0], points[2], points[5] }
+	//Vertices
+	glm::vec3 pos[8] = { {0.5, 0.5, 0.5},
+						{0.5, 0.5, -0.5},
+						{0.5, -0.5, 0.5},
+						{0.5, -0.5, -0.5},
+						{-0.5, 0.5, 0.5},
+						{-0.5, 0.5, -0.5},
+						{-0.5, -0.5, 0.5},
+						{-0.5, -0.5, -0.5}
 	};
+	//Normals
+	glm::vec3 norm[6] =
+	{
+		{ 0.0, 0.0, -1.0 },
+		{ 0.0, 1.0, 0.0 },
+		{ 0.0, 0.0, 1.0 },
+		{ 0.0, -1.0, 0.0 },
+		{ 1.0, 0.0, 0.0 },
+		{ -1.0, 0.0, 0.0 }
+	};
+	//Faces
+	betterFace faces[12] = { { { pos[0], norm[4] }, { pos[1], norm[4] }, { pos[2], norm[4] } },
+							{ { pos[1], norm[4] }, { pos[3], norm[4] }, { pos[2], norm[4] } },
+
+							{ { pos[1], norm[1] },{ pos[0], norm[1] },{ pos[4], norm[1] }} ,
+							{ { pos[1], norm[1] },{ pos[4], norm[1] },{ pos[5], norm[1] }} ,
+							 															 
+							{ { pos[4], norm[5] },{ pos[7], norm[5] },{ pos[5], norm[5] }} ,
+							{ { pos[4], norm[5] },{ pos[6], norm[5] },{ pos[7], norm[5] }} ,
+							 															 
+							{ { pos[2], norm[3] },{ pos[3], norm[3] },{ pos[6], norm[3] }} ,
+							{ { pos[3], norm[3] },{ pos[7], norm[3] },{ pos[6], norm[3] }} ,
+							 															 
+							{ { pos[0], norm[2] },{ pos[6], norm[2] },{ pos[2], norm[2] }} ,
+							{ { pos[0], norm[2] },{ pos[4], norm[2] },{ pos[6], norm[2] }} ,
+																						 
+							{ { pos[1], norm[0] },{ pos[5], norm[0] },{ pos[7], norm[0] }} ,
+							{ { pos[1], norm[0] },{ pos[7], norm[0] },{ pos[3], norm[0] }}
 	
+	};			
+
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(face) * 12, &vtxFaces, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(betterFace) * 12, &faces, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vtxData), 0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vtxData), (void*)offsetof(vtxData, x));
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vtxData), (void*)offsetof(vtxData, u));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(betterData), 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(betterData), (void*)offsetof(betterData, normals));
+	return cubeVa;
+}
+
+void App::createCubes()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		cubeMatrices[i] = glm::translate(glm::mat4(1), glm::vec3(i * 2, 0, 0));	
+	}
+}
+
+void App::createSpheres()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		sphereMatrices[i] = glm::translate(glm::mat4(1), glm::vec3(0, i * 2, 0));
+	}
 }
 
 void App::run() {
@@ -235,7 +236,6 @@ void App::run() {
 		if (a) {
 			std::cout << glewGetErrorString(a) << std::endl;
 		}
-		std::cout << dt << std::endl;
 	}
 }
 

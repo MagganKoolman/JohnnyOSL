@@ -32,6 +32,8 @@
     <ClInclude Include="osl.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="forward.frag.glsl" />
+    <None Include="forward.vert.glsl" />
     <None Include="oslForward.frag.glsl" />
     <None Include="oslForward.vert.glsl" />
     <None Include="oslShader.comp.glsl" />

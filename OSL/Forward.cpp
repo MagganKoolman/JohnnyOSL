@@ -93,8 +93,19 @@ void Forward::render(GLuint va, glm::mat4 viewProj)
 	glUseProgram(this->programID);
 	GLint loc = glGetUniformLocation(this->programID, "viewProjection");
 	glUniformMatrix4fv(loc, 1, GL_FALSE, &viewProj[0][0]);
+	glBindVertexArray(cubeVao);
 
-	glBindVertexArray(va);
+	GLint locWorld = glGetUniformLocation(this->programID, "world");
+	for (int i = 0; i < 3; i++)
+	{
+		glUniformMatrix4fv(locWorld, 1, GL_FALSE, &cubes[i][0][0]);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
 
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(sphereVao);
+	for (int i = 0; i < 3; i++)
+	{
+		glUniformMatrix4fv(locWorld, 1, GL_FALSE, &spheres[i][0][0]);
+		glDrawArrays(GL_TRIANGLES, 0, 1200);
+	}
 }

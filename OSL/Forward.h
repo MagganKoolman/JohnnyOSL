@@ -9,6 +9,10 @@ public:
 	~Forward();
 	void init();
 	void render(GLuint va, glm::mat4 viewProj);
+	glm::mat4* cubes;
+	glm::mat4* spheres;
+	GLuint cubeVao;
+	GLuint sphereVao;
 private:
 	GLuint programID;
 };
