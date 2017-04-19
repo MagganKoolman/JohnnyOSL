@@ -11,3 +11,6 @@ Debug/*
 *.tlog
 *.exe
 *.pdb
+*.ipch
+*.db
+*.ip
