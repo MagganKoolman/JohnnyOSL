@@ -12,7 +12,8 @@ void GLAPIENTRY gl_callback(GLenum source, GLenum type, GLuint id,
 	GLenum severity, GLsizei length,
 	const GLchar *message, const void *userParam);
 
-int move;
+glm::vec3 movement = { 0,0,0 };
+bool wDown, sDown, aDown, dDown, eDown, qDown;
 bool running;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -20,22 +21,39 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (action == GLFW_PRESS)
 	{
 		if (key == GLFW_KEY_W)
-			move = 1;
+			wDown = true;
 		if (key == GLFW_KEY_S)
-			move = 2;
+			sDown = true;
 		if (key == GLFW_KEY_A)
-			move = 3;
+			aDown = true;
 		if (key == GLFW_KEY_D)
-			move = 4;
+			dDown = true;
+		if (key == GLFW_KEY_Q)
+			qDown = true;
+		if (key == GLFW_KEY_E)
+			eDown = true;
 		if (key == GLFW_KEY_ESCAPE)
 			running = false;
 	}
 	if (action == GLFW_RELEASE)
 	{
-		move = 0;
+		if (key == GLFW_KEY_W)
+			wDown = false;
+		if (key == GLFW_KEY_S)
+			sDown = false;
+		if (key == GLFW_KEY_A)
+			aDown = false;
+		if (key == GLFW_KEY_D)
+			dDown = false;
+		if (key == GLFW_KEY_Q)
+			qDown = false;
+		if (key == GLFW_KEY_E)
+			eDown = false;
 	}
 }
-
+void App::updateInputs() {
+	movement = {  aDown + -1 *dDown, eDown + -1 * qDown, wDown + -1 * sDown };
+}
 App::App() {
 	glfwInit();
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
@@ -58,6 +76,7 @@ App::App() {
 	glfwSetKeyCallback(w, key_callback);
 	glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	oslstuff.init();
 
 	sphereSize = 0;
 	forwardProgram.sphereVao = createSphereVBO(20);
@@ -94,14 +113,14 @@ GLuint App::createSphereVBO(int resolution)
 										x,//normals
 										y,
 										z,
-										(float)j/resolution, //uvs
-										(float)i/resolution
+										(float)j/(resolution-1), //uvs
+										(float)i/(resolution/2)
 			};
 		}
 	}
 	int newRes = resolution;
 	std::vector<face> faceData;
-	vtxData t = {1,1,1,1,1,1,1,1};
+	vtxData t = { 1,1,1,1,1,1,1,1 };
 	faceData.resize(2 * newRes*(newRes / 2 + 1) + 10, {t,t,t});
 	//face* faceData = new face[2*newRes*(newRes/2+1)];
 	for (int i = 0; i < newRes/2; i++) {
@@ -124,9 +143,6 @@ GLuint App::createSphereVBO(int resolution)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(face)* faceData.size(), faceData.data(), GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vtxData), 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vtxData), (void*)offsetof(vtxData, x));
@@ -277,6 +293,7 @@ void App::run() {
 	double time, dt;
 	time = 0.0;
 	glfwSetTime(time);
+	oslstuff.generateTextures(sphereVa, sphereSize);
 	while(!glfwWindowShouldClose(w) && running){
 		dt = glfwGetTime() - time;	
 		time = glfwGetTime();
@@ -286,8 +303,10 @@ void App::run() {
 		camera.update(lastx - xpos, lasty - ypos, dt);
 		lastx = xpos;
 		lasty = ypos;
-		camera.move(move, dt);
-		forwardProgram.render(camera.view, camera.getViewProjection(), camera.cameraPos);
+		updateInputs();
+		camera.move(movement, dt);
+		oslstuff.render(sphereVa, sphereSize, camera.getViewProjection());
+		//forwardProgram.render(cubeVa, camera.getViewProjection());
 		glfwSwapBuffers(w);
 		int a = glGetError();
 		if (a) {

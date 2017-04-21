@@ -15,7 +15,7 @@ public:
 	static const int SCREEN_HEIGHT = 800;
 
 	//Controls
-	void move(int direction, float dt);
+	void move(glm::vec3 direction, float dt);
 
 	mat4 projection;
 	mat4 view;

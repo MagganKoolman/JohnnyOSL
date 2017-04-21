@@ -40,5 +40,6 @@ public:
 	GLuint createCubeVBO();
 	void createCubes();
 	void createSpheres();
+	void updateInputs();
 	GLuint loadTexture(std::string path);
 };
