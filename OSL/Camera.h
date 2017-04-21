@@ -16,10 +16,11 @@ public:
 
 	//Controls
 	void move(int direction, float dt);
-private:
-	vec3 cameraPos;
-	vec3 cameraDir;
-	vec3 cameraRight;
-	mat4 view;
+
 	mat4 projection;
+	mat4 view;
+	vec3 cameraPos;
+private:
+	vec3 cameraDir;
+	vec3 cameraRight;	
 };

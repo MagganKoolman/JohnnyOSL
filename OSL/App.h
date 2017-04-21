@@ -4,6 +4,8 @@
 #include "Camera.h"
 #include "GL\glew.h"
 #include "GLFW\glfw3.h"
+#include "src\SOIL.h"
+#include <string>
 
 class App {
 struct vtxData{
@@ -14,6 +16,7 @@ struct face {
 };
 struct betterData {
 	glm::vec3 pos, normals;
+	glm::vec2 UV;
 };
 struct betterFace {
 	betterData f1, f2, f3;
@@ -37,4 +40,5 @@ public:
 	GLuint createCubeVBO();
 	void createCubes();
 	void createSpheres();
+	GLuint loadTexture(std::string path);
 };

@@ -134,6 +134,8 @@ GLuint App::createSphereVBO(int resolution)
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	forwardProgram.sphereTex = loadTexture("textures/daSphere.png");
 	return sphereVa;
 }
 
@@ -163,24 +165,38 @@ GLuint App::createCubeVBO()
 		{ 1.0, 0.0, 0.0 },
 		{ -1.0, 0.0, 0.0 }
 	};
+	//UV coordinates
+	glm::vec2 UVs[12] = { {0, 0 } ,    //0
+						{ 0.5, 0 } ,   //1
+						{ 1, 0 } ,	   //2
+						{ 0, 1.f/3.f },	   //3
+						{ 0.5, 1.f/3.f },  //4
+						{ 1, 1.f / 3.f },	   //5
+						{ 0, 2.f/3.f },	   //6
+						{ 0.5, 2.f/3.f },  //7
+						{ 1, 2.f/3.f },	   //8
+						{ 0, 1 },	   //9
+						{ 0.5, 1 },	   //10
+						{ 1, 1 }	   //11
+	};
 	//Faces
-	betterFace faces[12] = { { { pos[0], norm[4] }, { pos[1], norm[4] }, { pos[2], norm[4] } },
-							{ { pos[1], norm[4] }, { pos[3], norm[4] }, { pos[2], norm[4] } },
-
-							{ { pos[1], norm[1] },{ pos[0], norm[1] },{ pos[4], norm[1] }} ,
-							{ { pos[1], norm[1] },{ pos[4], norm[1] },{ pos[5], norm[1] }} ,
-							 															 
-							{ { pos[4], norm[5] },{ pos[7], norm[5] },{ pos[5], norm[5] }} ,
-							{ { pos[4], norm[5] },{ pos[6], norm[5] },{ pos[7], norm[5] }} ,
-							 															 
-							{ { pos[2], norm[3] },{ pos[3], norm[3] },{ pos[6], norm[3] }} ,
-							{ { pos[3], norm[3] },{ pos[7], norm[3] },{ pos[6], norm[3] }} ,
-							 															 
-							{ { pos[0], norm[2] },{ pos[6], norm[2] },{ pos[2], norm[2] }} ,
-							{ { pos[0], norm[2] },{ pos[4], norm[2] },{ pos[6], norm[2] }} ,
-																						 
-							{ { pos[1], norm[0] },{ pos[5], norm[0] },{ pos[7], norm[0] }} ,
-							{ { pos[1], norm[0] },{ pos[7], norm[0] },{ pos[3], norm[0] }}
+	betterFace faces[12] = {{ { pos[0], norm[4], UVs[10] }, { pos[1], norm[4], UVs[11] }, { pos[2], norm[4], UVs[7] } }, //klar
+							{ { pos[1], norm[4], UVs[11] }, { pos[3], norm[4], UVs[8] }, { pos[2], norm[4], UVs[7] } },
+											  																   
+							{ { pos[1], norm[1], UVs[5] }, { pos[0], norm[1], UVs[2] }, { pos[4], norm[1], UVs[1] } } , 
+							{ { pos[1], norm[1], UVs[5] }, { pos[4], norm[1], UVs[1] }, { pos[5], norm[1], UVs[4] } } ,
+							 								 				 			 					   
+							{ { pos[4], norm[5], UVs[8] }, { pos[7], norm[5], UVs[4] }, { pos[5], norm[5], UVs[7] } } , //klar
+							{ { pos[4], norm[5], UVs[8] }, { pos[6], norm[5], UVs[5] }, { pos[7], norm[5], UVs[4] } } ,
+							 								 				 			 					   
+							{ { pos[2], norm[3], UVs[7] }, { pos[3], norm[3], UVs[4] }, { pos[6], norm[3], UVs[6] } } , //klar
+							{ { pos[3], norm[3], UVs[4] }, { pos[7], norm[3], UVs[3] }, { pos[6], norm[3], UVs[6] } } ,
+							 								 				 			 					   
+							{ { pos[0], norm[2], UVs[10] }, { pos[6], norm[2], UVs[6] }, { pos[2], norm[2], UVs[7] } } , //klar
+							{ { pos[0], norm[2], UVs[10] }, { pos[4], norm[2], UVs[9] }, { pos[6], norm[2], UVs[6] } } ,
+														 			 				 						   
+							{ { pos[1], norm[0], UVs[1] }, { pos[5], norm[0], UVs[0] }, { pos[7], norm[0], UVs[3] } } , //klar
+							{ { pos[1], norm[0], UVs[1] }, { pos[7], norm[0], UVs[3] }, { pos[3], norm[0], UVs[4] } }
 	
 	};			
 
@@ -190,9 +206,12 @@ GLuint App::createCubeVBO()
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
-
+	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(betterData), 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(betterData), (void*)offsetof(betterData, normals));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(betterData), (void*)offsetof(betterData, UV));
+
+	forwardProgram.cubeTex = loadTexture("textures/daSphere2.png");
 	return cubeVa;
 }
 
@@ -232,11 +251,30 @@ void App::createSpheres()
 	}
 }
 
+GLuint App::loadTexture(std::string path)
+{
+	GLuint tex = SOIL_load_OGL_texture
+	(
+		path.c_str(),
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID, 
+		SOIL_FLAG_INVERT_Y
+	);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);	
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return tex;
+}
+
 void App::run() {
 	glClearColor(1.0, 0.0, 1.0, 1.0);
 	double xpos, ypos, lastx, lasty;
 	glfwGetCursorPos(w, &lastx, &lasty);
-	double time, dt; //glfwGetTime();
+	double time, dt;
 	time = 0.0;
 	glfwSetTime(time);
 	while(!glfwWindowShouldClose(w) && running){
@@ -249,8 +287,7 @@ void App::run() {
 		lastx = xpos;
 		lasty = ypos;
 		camera.move(move, dt);
-		//oslstuff.render(sphereVa, sphereSize);
-		forwardProgram.render(cubeVa, camera.getViewProjection());
+		forwardProgram.render(camera.view, camera.getViewProjection(), camera.cameraPos);
 		glfwSwapBuffers(w);
 		int a = glGetError();
 		if (a) {

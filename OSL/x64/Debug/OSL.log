@@ -1,7 +1,6 @@
-﻿  Forward.cpp
-  App.cpp
+﻿  App.cpp
 c:\users\maggan\documents\visual studio 2017\projects\osl\osl\app.cpp(80): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\maggan\documents\visual studio 2017\projects\osl\osl\app.cpp(228): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  Generating Code...
+c:\users\maggan\documents\visual studio 2017\projects\osl\osl\app.cpp(286): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\maggan\documents\visual studio 2017\projects\osl\osl\app.cpp(289): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   OSL.vcxproj -> C:\Users\Maggan\Documents\Visual Studio 2017\Projects\OSL\x64\Debug\OSL.exe
   OSL.vcxproj -> C:\Users\Maggan\Documents\Visual Studio 2017\Projects\OSL\x64\Debug\OSL.pdb (Partial PDB)
