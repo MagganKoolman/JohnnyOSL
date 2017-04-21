@@ -12,7 +12,7 @@ void GLAPIENTRY gl_callback(GLenum source, GLenum type, GLuint id,
 	GLenum severity, GLsizei length,
 	const GLchar *message, const void *userParam);
 
-glm::vec3 movement = { 0,0,0 };
+
 bool wDown, sDown, aDown, dDown, eDown, qDown;
 bool running;
 
@@ -257,9 +257,9 @@ void App::run() {
 	glfwSetTime(time);
 	oslstuff.generateTextures(sphereVa, sphereSize);
 	while(!glfwWindowShouldClose(w) && running){
-		dt = glfwGetTime() - time;	
+		dt = glfwGetTime() - time;
 		time = glfwGetTime();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glfwPollEvents();	
 		glfwGetCursorPos(w, &xpos, &ypos);
 		camera.update(lastx - xpos, lasty - ypos, dt);

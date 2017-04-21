@@ -1,8 +1,2 @@
 ﻿  osl.cpp
-  App.cpp
-c:\users\emil\desktop\osl\johnnyosl\osl\app.cpp(99): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\emil\desktop\osl\johnnyosl\osl\app.cpp(265): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\emil\desktop\osl\johnnyosl\osl\app.cpp(269): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  Generating Code...
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   OSL.vcxproj -> C:\Users\Emil\Desktop\OSL\JohnnyOSL\x64\Debug\OSL.exe

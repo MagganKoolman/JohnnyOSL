@@ -29,6 +29,9 @@ private:
 	Camera camera;
 	glm::mat4 cubeMatrices[25*25];
 	glm::mat4 sphereMatrices[25*25];
+
+
+	glm::vec3 movement = { 0,0,0 };
 public:
 	App();
 	~App();
