@@ -1,5 +1,4 @@
-﻿  Source.cpp
-  App.cpp
+﻿  App.cpp
 c:\users\maggan\documents\visual studio 2017\projects\osl\osl\app.cpp(99): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\maggan\documents\visual studio 2017\projects\osl\osl\app.cpp(303): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
 c:\users\maggan\documents\visual studio 2017\projects\osl\osl\app.cpp(307): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
@@ -7,6 +6,5 @@ c:\users\maggan\documents\visual studio 2017\projects\osl\osl\app.cpp(307): warn
   Skipping... (no relevant changes detected)
   Lights.cpp
   Forward.cpp
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   OSL.vcxproj -> C:\Users\Maggan\Documents\Visual Studio 2017\Projects\OSL\x64\Debug\OSL.exe
   OSL.vcxproj -> C:\Users\Maggan\Documents\Visual Studio 2017\Projects\OSL\x64\Debug\OSL.pdb (Partial PDB)
