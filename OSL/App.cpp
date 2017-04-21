@@ -88,11 +88,6 @@ App::App() {
 	forwardProgram.cubes = cubeMatrices;
 	
 	forwardProgram.init();
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, forwardProgram.sphereTex);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, forwardProgram.cubeTex);
 }
 App::~App(){
 
@@ -148,6 +143,9 @@ GLuint App::createSphereVBO(int resolution)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(face)* faceData.size(), faceData.data(), GL_STATIC_DRAW);
 
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vtxData), 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vtxData), (void*)offsetof(vtxData, x));

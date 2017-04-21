@@ -2,6 +2,7 @@
 #include <GL\glew.h>
 #include <GL\GL.h>
 #include <glm\glm.hpp>
+#include "Lights.h"
 
 class Forward {
 public:
@@ -17,4 +18,5 @@ public:
 	GLuint sphereTex;
 private:
 	GLuint programID;
+	Lights lights;
 };

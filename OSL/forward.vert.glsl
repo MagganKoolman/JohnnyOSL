@@ -8,8 +8,8 @@ out vec3 posOut;
 out vec3 normalOut;
 out vec2 UVout;
 
-uniform mat4 viewProjection;
-uniform mat4 world;
+layout(location = 0) uniform mat4 viewProjection;
+layout(location = 4) uniform mat4 world;
 
 void main(){
 	posOut = vec3(world * vec4(position, 1));
