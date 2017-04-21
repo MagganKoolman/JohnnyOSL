@@ -180,22 +180,22 @@ GLuint App::createCubeVBO()
 						{ 1, 1 }	   //11
 	};
 	//Faces
-	betterFace faces[12] = {{ { pos[0], norm[4], UVs[10] }, { pos[1], norm[4], UVs[11] }, { pos[2], norm[4], UVs[7] } }, //klar
+	betterFace faces[12] = {{ { pos[0], norm[4], UVs[10] }, { pos[1], norm[4], UVs[11] }, { pos[2], norm[4], UVs[7] } }, 
 							{ { pos[1], norm[4], UVs[11] }, { pos[3], norm[4], UVs[8] }, { pos[2], norm[4], UVs[7] } },
 											  																   
 							{ { pos[1], norm[1], UVs[5] }, { pos[0], norm[1], UVs[2] }, { pos[4], norm[1], UVs[1] } } , 
 							{ { pos[1], norm[1], UVs[5] }, { pos[4], norm[1], UVs[1] }, { pos[5], norm[1], UVs[4] } } ,
 							 								 				 			 					   
-							{ { pos[4], norm[5], UVs[8] }, { pos[7], norm[5], UVs[4] }, { pos[5], norm[5], UVs[7] } } , //klar
+							{ { pos[4], norm[5], UVs[8] }, { pos[7], norm[5], UVs[4] }, { pos[5], norm[5], UVs[7] } } , 
 							{ { pos[4], norm[5], UVs[8] }, { pos[6], norm[5], UVs[5] }, { pos[7], norm[5], UVs[4] } } ,
 							 								 				 			 					   
-							{ { pos[2], norm[3], UVs[7] }, { pos[3], norm[3], UVs[4] }, { pos[6], norm[3], UVs[6] } } , //klar
+							{ { pos[2], norm[3], UVs[7] }, { pos[3], norm[3], UVs[4] }, { pos[6], norm[3], UVs[6] } } , 
 							{ { pos[3], norm[3], UVs[4] }, { pos[7], norm[3], UVs[3] }, { pos[6], norm[3], UVs[6] } } ,
 							 								 				 			 					   
-							{ { pos[0], norm[2], UVs[10] }, { pos[6], norm[2], UVs[6] }, { pos[2], norm[2], UVs[7] } } , //klar
+							{ { pos[0], norm[2], UVs[10] }, { pos[6], norm[2], UVs[6] }, { pos[2], norm[2], UVs[7] } } , 
 							{ { pos[0], norm[2], UVs[10] }, { pos[4], norm[2], UVs[9] }, { pos[6], norm[2], UVs[6] } } ,
 														 			 				 						   
-							{ { pos[1], norm[0], UVs[1] }, { pos[5], norm[0], UVs[0] }, { pos[7], norm[0], UVs[3] } } , //klar
+							{ { pos[1], norm[0], UVs[1] }, { pos[5], norm[0], UVs[0] }, { pos[7], norm[0], UVs[3] } } , 
 							{ { pos[1], norm[0], UVs[1] }, { pos[7], norm[0], UVs[3] }, { pos[3], norm[0], UVs[4] } }
 	
 	};			
