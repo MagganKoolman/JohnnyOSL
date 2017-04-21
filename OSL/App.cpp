@@ -113,14 +113,14 @@ GLuint App::createSphereVBO(int resolution)
 										x,//normals
 										y,
 										z,
-										(float)j/resolution, //uvs
-										(float)i/resolution
+										(float)j/(resolution-1), //uvs
+										(float)i/(resolution/2)
 			};
 		}
 	}
 	int newRes = resolution;
 	std::vector<face> faceData;
-	vtxData t = {1,1,1,1,1,1,1,1};
+	vtxData t = { 1,1,1,1,1,1,1,1 };
 	faceData.resize(2 * newRes*(newRes / 2 + 1) + 10, {t,t,t});
 	//face* faceData = new face[2*newRes*(newRes/2+1)];
 	for (int i = 0; i < newRes/2; i++) {
@@ -143,9 +143,6 @@ GLuint App::createSphereVBO(int resolution)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(face)* faceData.size(), faceData.data(), GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vtxData), 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vtxData), (void*)offsetof(vtxData, x));
@@ -258,6 +255,7 @@ void App::run() {
 	double time, dt; //glfwGetTime();
 	time = 0.0;
 	glfwSetTime(time);
+	oslstuff.generateTextures(sphereVa, sphereSize);
 	while(!glfwWindowShouldClose(w) && running){
 		dt = glfwGetTime() - time;	
 		time = glfwGetTime();
@@ -269,7 +267,7 @@ void App::run() {
 		lasty = ypos;
 		updateInputs();
 		camera.move(movement, dt);
-		oslstuff.render(sphereVa, sphereSize);
+		oslstuff.render(sphereVa, sphereSize, camera.getViewProjection());
 		//forwardProgram.render(cubeVa, camera.getViewProjection());
 		glfwSwapBuffers(w);
 		int a = glGetError();

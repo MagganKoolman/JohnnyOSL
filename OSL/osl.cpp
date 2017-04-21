@@ -1,6 +1,7 @@
 #include "osl.h"
 #include <fstream>
 #include <vector>
+#include <glm/gtc/matrix_transform.hpp>
 
 void printshaderError(GLuint shader) {
 	int success = 0;
@@ -97,7 +98,7 @@ void osl::init() {
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &sphere.positionTex);
 	glBindTexture(GL_TEXTURE_2D, sphere.positionTex);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, textureRes, textureRes);// 0, GL_RGBA, GL_FLOAT, nullptr);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, textureRes, textureRes);// , 0, GL_RGBA, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -127,7 +128,7 @@ void osl::init() {
 
 
 }
-void osl::render(GLuint va, int size)
+void osl::render(GLuint va, int size, glm::mat4 vp)
 {
 	glUseProgram(oslprog);
 
@@ -159,15 +160,24 @@ void osl::render(GLuint va, int size)
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 	glUseProgram(0);
 
+
 	glUseProgram(oslForward);
 	glEnable(GL_DEPTH_TEST);
 	glBindVertexArray(va);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	location = glGetUniformLocation(oslForward, "viewProjection");
+	glUniformMatrix4fv(location, 1, GL_FALSE, &vp[0][0]);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sphere.diffuseTex);
 	location = glGetUniformLocation(oslForward, "diffTex");
 	glUniform1i(location, 0);
 
 	glDrawArrays(GL_TRIANGLES, 0, size);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
 }
 void osl::generateTextures(GLuint va, int size)
@@ -187,6 +197,7 @@ void osl::generateTextures(GLuint va, int size)
 	//glBindTextures(0, 2, a);
 
 	glDrawArrays(GL_TRIANGLES, 0, size);
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 	glUseProgram(0);
 }
 osl::osl() {
