@@ -37,4 +37,5 @@ public:
 	GLuint createCubeVBO();
 	void createCubes();
 	void createSpheres();
+	void updateInputs();
 };

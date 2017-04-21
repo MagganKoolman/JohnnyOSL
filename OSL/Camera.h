@@ -15,7 +15,7 @@ public:
 	static const int SCREEN_HEIGHT = 800;
 
 	//Controls
-	void move(int direction, float dt);
+	void move(glm::vec3 direction, float dt);
 private:
 	vec3 cameraPos;
 	vec3 cameraDir;

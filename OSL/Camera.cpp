@@ -34,24 +34,19 @@ glm::mat4 Camera::getViewProjection()
 	return this->projection * this->view;
 }
 
-void Camera::move(int direction, float dt)
+void Camera::move(glm::vec3 direction, float dt)
 {
-	switch (direction)
-	{
-	case 0:
-		break;
-	case 1:
-		this->cameraPos += this->cameraDir * 10.f* dt;
-		break;
-	case 2:
-		this->cameraPos -= this->cameraDir *10.f* dt;
-		break;
-	case 3:
-		this->cameraPos += this->cameraRight *10.f* dt;
-		break;
-	case 4:
-		this->cameraPos -= this->cameraRight *10.f* dt;
-		break;
-	}
-}
+	this->cameraPos += this->cameraDir * direction.z * 10.f * dt;
+	this->cameraPos += this->cameraRight * direction.x * 10.f * dt;
+	this->cameraPos += glm::vec3(0, 1, 0)*direction.y * 10.f*dt;
+	/*
+	this->cameraPos += this->cameraDir * 10.f* dt;
 
+	this->cameraPos -= this->cameraDir *10.f* dt;
+
+	this->cameraPos += this->cameraRight *10.f* dt;
+
+	this->cameraPos -= this->cameraRight *10.f* dt;
+	*/
+
+}
