@@ -305,8 +305,8 @@ void App::run() {
 		lasty = ypos;
 		updateInputs();
 		camera.move(movement, dt);
-		oslstuff.render(sphereVa, sphereSize, camera.getViewProjection());
-		//forwardProgram.render(cubeVa, camera.getViewProjection());
+		//oslstuff.render(sphereVa, sphereSize, camera.getViewProjection());
+		forwardProgram.render(camera.view, camera.getViewProjection(), camera.cameraPos);
 		glfwSwapBuffers(w);
 		int a = glGetError();
 		if (a) {

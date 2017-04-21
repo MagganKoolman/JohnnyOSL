@@ -16,3 +16,4 @@ Debug/*
 *.db
 *.ip
 *.idb
+*.orig
