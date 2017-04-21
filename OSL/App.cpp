@@ -76,7 +76,7 @@ App::App() {
 	glfwSetKeyCallback(w, key_callback);
 	glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	oslstuff.init();
+	//oslstuff.init();
 
 	sphereSize = 0;
 	forwardProgram.sphereVao = createSphereVBO(20);
@@ -86,8 +86,13 @@ App::App() {
 	forwardProgram.cubeVao = createCubeVBO();
 	createCubes();
 	forwardProgram.cubes = cubeMatrices;
-
+	
 	forwardProgram.init();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, forwardProgram.sphereTex);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, forwardProgram.cubeTex);
 }
 App::~App(){
 
