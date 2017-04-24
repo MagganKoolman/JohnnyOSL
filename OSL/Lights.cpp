@@ -37,6 +37,6 @@ void Lights::init(GLuint programID, int nrOfLights)
 	for (int i = 0; i < nrOfLights; i++)
 	{
 		this->allLights[i].position = vec4(40 * i, 0.5, 40 * i, 1);
-		this->allLights[i].colora = vec4(0.8, 0, 0.8, 1);
+		this->allLights[i].colora = vec4(0.5, 0.5, 0.5, 1);
 	}
 }

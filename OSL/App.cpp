@@ -230,7 +230,7 @@ GLuint App::createCubeVBO()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(betterData), (void*)offsetof(betterData, normals));
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(betterData), (void*)offsetof(betterData, UV));
 
-	forwardProgram.cubeTex = loadTexture("textures/daSphere2.png");
+	forwardProgram.cubeTex = loadTexture("textures/rubik.png");
 	return cubeVa;
 }
 
