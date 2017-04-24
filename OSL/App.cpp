@@ -79,7 +79,7 @@ App::App() {
 	oslstuff.init();
 
 	sphereSize = 0;
-	forwardProgram.sphereVao = createSphereVBO(60);
+	forwardProgram.sphereVao = createSphereVBO(20);
 	createSpheres();
 	forwardProgram.spheres = sphereMatrices;
 
@@ -296,7 +296,7 @@ void App::run() {
 	double time, dt;
 	time = 0.0;
 	glfwSetTime(time);
-	oslstuff.generateTextures(sphereVa, sphereSize);
+	oslstuff.generateTextures(cubeVa, 36);
 	glFinish();
 	while(!glfwWindowShouldClose(w) && running){
 		dt = glfwGetTime() - time;
@@ -309,7 +309,9 @@ void App::run() {
 		lasty = ypos;
 		updateInputs();
 		camera.move(movement, dt);
-		oslstuff.render(sphereVa, sphereSize, camera.getViewProjection());
+		oslstuff.generateTextures(cubeVa, 36);
+		glFinish();
+		oslstuff.render(cubeVa, 36, camera.getViewProjection());
 		//forwardProgram.render(camera.view, camera.getViewProjection(), camera.cameraPos);
 		glfwSwapBuffers(w);
 		int a = glGetError();

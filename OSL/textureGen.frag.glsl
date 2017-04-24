@@ -9,7 +9,8 @@ layout(binding = 0, rgba32f) uniform image2D positionTex;
 layout(binding = 1, rgba32f) uniform image2D normalTex;
 
 void main(){
-	imageStore(positionTex, ivec2(uvOut*imageSize(positionTex)), vec4(positionOut, 1));
-	imageStore(normalTex, ivec2(uvOut*imageSize(normalTex)), vec4(normalOut, 1));
-	fragment_color = vec4(positionOut.xy, 0, 0);
+	vec2 imageCoord = uvOut * imageSize(positionTex);
+	imageStore(positionTex, ivec2(imageCoord), vec4(positionOut, 0));
+	imageStore(normalTex, ivec2(imageCoord), vec4(normalOut, 0));
+	fragment_color = vec4(normalOut.xy, 0, 0);
 }

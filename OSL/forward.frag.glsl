@@ -52,6 +52,7 @@ void main(){
 			fragment_color += color * diffuse + color * specular + lights[i].colora;
 		}
 	}
+	fragment_color = vec4(normalOut, 1);
 	//fragment_color = vec4(UVout,0,1);
 	//fragment_color = vec4(vec3(0.5, 0, 0), 1);
 }
