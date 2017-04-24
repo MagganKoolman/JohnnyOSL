@@ -79,7 +79,7 @@ App::App() {
 	//oslstuff.init();
 
 	sphereSize = 0;
-	forwardProgram.sphereVao = createSphereVBO(20);
+	forwardProgram.sphereVao = createSphereVBO(40);
 	createSpheres();
 	forwardProgram.spheres = sphereMatrices;
 

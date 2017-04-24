@@ -117,6 +117,6 @@ void Forward::render(glm::mat4 view, glm::mat4 viewProj, glm::vec3 position)
 	for (int i = 0; i < 25*25; i++)
 	{
 		glUniformMatrix4fv(locWorld, 1, GL_FALSE, &spheres[i][0][0]);
-		glDrawArrays(GL_TRIANGLES, 0, 1200);
+		glDrawArrays(GL_TRIANGLES, 0, 4800);
 	}
 }
