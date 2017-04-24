@@ -21,7 +21,6 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Forward.cpp" />
     <ClCompile Include="Lights.cpp" />
     <ClCompile Include="osl.cpp" />
     <ClCompile Include="Source.cpp" />
