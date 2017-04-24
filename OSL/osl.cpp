@@ -207,6 +207,10 @@ void osl::generateTextures(GLuint va, int size)
 	//GLuint a[2] = { sphere.normalTex, sphere.positionTex };
 	//glBindTextures(0, 2, a);
 
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
 	glDrawArrays(GL_TRIANGLES, 0, size);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 	glUseProgram(0);
