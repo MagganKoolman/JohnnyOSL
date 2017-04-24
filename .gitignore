@@ -18,3 +18,4 @@ Debug/*
 *.idb
 *.orig
 *.log
+OSL/x64/Debug/osl.obj.enc
