@@ -79,15 +79,11 @@ App::App() {
 	oslstuff.init();
 
 	sphereSize = 0;
-	forwardProgram.sphereVao = createSphereVBO(40);
+	createSphereVBO(40);
 	createSpheres();
-	forwardProgram.spheres = sphereMatrices;
 
-	forwardProgram.cubeVao = createCubeVBO();
+	createCubeVBO();
 	createCubes();
-	forwardProgram.cubes = cubeMatrices;
-	
-	//forwardProgram.init();
 }
 App::~App(){
 
@@ -154,7 +150,6 @@ GLuint App::createSphereVBO(int resolution)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	forwardProgram.sphereTex = loadTexture("textures/daSphere.png");
 	return sphereVa;
 }
 
@@ -230,7 +225,6 @@ GLuint App::createCubeVBO()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(betterData), (void*)offsetof(betterData, normals));
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(betterData), (void*)offsetof(betterData, UV));
 
-	forwardProgram.cubeTex = loadTexture("textures/rubik.png");
 	return cubeVa;
 }
 
@@ -309,10 +303,7 @@ void App::run() {
 		lasty = ypos;
 		updateInputs();
 		camera.move(movement, dt);
-		//oslstuff.generateTextures(cubeVa, 36);
-		//glFinish();
 		oslstuff.render(cubeVa, 36, camera.getViewProjection());
-		//forwardProgram.render(camera.view, camera.getViewProjection(), camera.cameraPos);
 		glfwSwapBuffers(w);
 		int a = glGetError();
 		if (a) {
