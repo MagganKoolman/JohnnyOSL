@@ -40,6 +40,7 @@
     <None Include="oslForward.vert.glsl" />
     <None Include="oslShader.comp.glsl" />
     <None Include="textureGen.frag.glsl" />
+    <None Include="textureGen.geom.glsl" />
     <None Include="textureGen.vert.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
