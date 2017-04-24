@@ -13,9 +13,11 @@ public:
 	Lights();
 	~Lights();
 
-	void update(GLuint programID);
+	void update(GLuint programID, float dt);
 	void init(GLuint programID, int nrOfLights);
+
 private:
 	aLight* allLights;
 	GLuint lightBuffer;
+	float timer;
 };

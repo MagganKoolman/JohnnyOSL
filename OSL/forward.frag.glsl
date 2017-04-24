@@ -11,7 +11,7 @@ layout (location = 8) uniform vec3 cameraPos;
 uniform sampler2D someTex;
 
 struct Light{
-	vec3 position;
+	vec4 position;
 	vec4 colora;
 };
 
@@ -41,16 +41,17 @@ void main(){
 	float specular;
 	for (int i = 0; i < nrOfLights; i++)
 	{
-		if (length(lights[i].position - posOut) < 3)
+		if (length(lights[i].position.xyz - posOut) < lights[i].position.w)
 		{
-			diffuseVec = normalize(lights[i].position - posOut);
+			diffuseVec = normalize(lights[i].position.xyz - posOut);
 			diffuse = dot(diffuseVec, normalOut);
 
-			eyeDir = normalize(lights[i].position  - cameraPos);
+			eyeDir = normalize(lights[i].position.xyz  - cameraPos);
 			vHalfVector = reflect(diffuseVec, normalOut);
 			specular = pow(max(dot(eyeDir, vHalfVector),0.0), 20);
 			fragment_color += color * diffuse + color * specular + lights[i].colora;
 		}
 	}
+	//fragment_color = vec4(UVout,0,1);
 	//fragment_color = vec4(vec3(0.5, 0, 0), 1);
 }

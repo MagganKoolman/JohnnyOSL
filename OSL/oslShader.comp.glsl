@@ -4,8 +4,9 @@ uniform vec3 lightPos;
 uniform vec3 camPos;
 layout(binding = 0, rgba32f) uniform image2D positionTex;
 layout(binding = 1, rgba32f) uniform image2D normalTex;
-layout(binding = 2, rgba32f) uniform image2D destTex;
-layout(binding = 3, rgba32f) uniform image2D srcTex;
+layout(binding = 2, rgba32f) uniform image2D srcTex;
+layout(binding = 3, rgba32f) uniform image2D destTex;
+
 
 layout(local_size_x = 4, local_size_y = 4) in;
 

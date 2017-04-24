@@ -98,7 +98,7 @@ void osl::init() {
 	};
 	MYrgba *data = new MYrgba[textureRes*textureRes];
 	for (int i = 0; i < textureRes*textureRes; i++) {
-		data[i] = {50, 100, 50, 255};
+		data[i] = {255, 0, 0, 255};
 	}
 
 
@@ -107,7 +107,6 @@ void osl::init() {
 	glGenTextures(1, &sphere.positionTex);
 	glBindTexture(GL_TEXTURE_2D, sphere.positionTex);
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, textureRes, textureRes);// , 0, GL_RGBA, GL_FLOAT, nullptr);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, textureRes, textureRes, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -118,7 +117,6 @@ void osl::init() {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sphere.normalTex);
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, textureRes, textureRes);// , 0, GL_RGBA, GL_FLOAT, nullptr);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, textureRes, textureRes, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -129,12 +127,23 @@ void osl::init() {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sphere.diffuseTex);
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, textureRes, textureRes);// , 0, GL_RGBA, GL_FLOAT, nullptr);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, textureRes, textureRes, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+
+	glGenTextures(1, &sphereTex);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, sphereTex);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, textureRes, textureRes);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	delete data;
 }
@@ -152,13 +161,15 @@ void osl::render(GLuint va, int size, glm::mat4 vp)
 
 	glBindImageTexture(0, sphere.positionTex,	0,	GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 	glBindImageTexture(1, sphere.normalTex,		0,	GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
-	glBindImageTexture(2, sphere.diffuseTex,	0,	GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	glBindImageTexture(2, sphere.diffuseTex,	0,	GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+	glBindImageTexture(3, sphereTex,			0,	GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 
 
 	glDispatchCompute(16,16,1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 	glUseProgram(0);
 
+	glFinish();
 
 
 	glUseProgram(oslForward);
@@ -172,7 +183,7 @@ void osl::render(GLuint va, int size, glm::mat4 vp)
 	location = glGetUniformLocation(oslForward, "viewProjection");
 	glUniformMatrix4fv(location, 1, GL_FALSE, &vp[0][0]);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, sphere.diffuseTex);
+	glBindTexture(GL_TEXTURE_2D, sphereTex);
 	location = glGetUniformLocation(oslForward, "diffTex");
 	glUniform1i(location, 0);
 
@@ -189,14 +200,14 @@ void osl::generateTextures(GLuint va, int size)
 	glUniform1i(location, sphere.positionTex);
 	location = glGetUniformLocation(textureGenProg, "normalTex");
 	glUniform1i(location, sphere.normalTex);*/
-
-	glBindImageTexture(0, sphere.positionTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-	glBindImageTexture(1, sphere.normalTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	
+	glBindImageTexture(0, sphere.positionTex,	0,	GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	glBindImageTexture(1, sphere.normalTex,		0,	GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	
 	//GLuint a[2] = { sphere.normalTex, sphere.positionTex };
 	//glBindTextures(0, 2, a);
 
 	glDrawArrays(GL_TRIANGLES, 0, size);
-	glFinish();
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 	glUseProgram(0);
 }
