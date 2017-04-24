@@ -1,6 +1,1 @@
-﻿  App.cpp
-c:\users\maggan\documents\visual studio 2017\projects\osl\osl\app.cpp(99): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\maggan\documents\visual studio 2017\projects\osl\osl\app.cpp(306): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\maggan\documents\visual studio 2017\projects\osl\osl\app.cpp(310): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  OSL.vcxproj -> C:\Users\Maggan\Documents\Visual Studio 2017\Projects\OSL\x64\Debug\OSL.exe
-  OSL.vcxproj -> C:\Users\Maggan\Documents\Visual Studio 2017\Projects\OSL\x64\Debug\OSL.pdb (Partial PDB)
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.Cpp.Platform.targets(57,5): error MSB8020: The build tools for v140 (Platform Toolset = 'v140') cannot be found. To build using the v140 build tools, please install v140 build tools.  Alternatively, you may upgrade to the current Visual Studio tools by selecting the Project menu or right-click the solution, and then selecting "Retarget solution".
