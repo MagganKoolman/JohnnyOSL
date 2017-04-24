@@ -13,7 +13,7 @@ public:
 	const int textureRes = 64;
 	GLuint oslprog, textureGenProg, oslForward;
 	oslObject sphere, cube;
-
+	GLuint sphereTex; //temporary
 public:
 	osl();
 	~osl();

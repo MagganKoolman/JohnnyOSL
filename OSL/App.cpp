@@ -12,7 +12,7 @@ void GLAPIENTRY gl_callback(GLenum source, GLenum type, GLuint id,
 	GLenum severity, GLsizei length,
 	const GLchar *message, const void *userParam);
 
-glm::vec3 movement = { 0,0,0 };
+
 bool wDown, sDown, aDown, dDown, eDown, qDown;
 bool running;
 
@@ -76,7 +76,7 @@ App::App() {
 	glfwSetKeyCallback(w, key_callback);
 	glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	//oslstuff.init();
+	oslstuff.init();
 
 	sphereSize = 0;
 	forwardProgram.sphereVao = createSphereVBO(40);
@@ -87,7 +87,7 @@ App::App() {
 	createCubes();
 	forwardProgram.cubes = cubeMatrices;
 	
-	forwardProgram.init();
+	//forwardProgram.init();
 }
 App::~App(){
 
@@ -108,13 +108,13 @@ GLuint App::createSphereVBO(int resolution)
 			y = cosf(i*increment);
 			z = cosf(j*increment)*sinf(i*increment);
 			data[i*resolution + j] = {	x/2, //positions
-										y/2, 
+										y/2,
 										z/2,
-										x,//normals
+										x,	//normals
 										y,
 										z,
 										(float)j/(resolution-1), //uvs
-										(float)i/(resolution/2)
+										1-(float)i/(resolution/2)
 			};
 		}
 	}
@@ -297,10 +297,11 @@ void App::run() {
 	time = 0.0;
 	glfwSetTime(time);
 	oslstuff.generateTextures(sphereVa, sphereSize);
+	glFinish();
 	while(!glfwWindowShouldClose(w) && running){
-		dt = glfwGetTime() - time;	
+		dt = glfwGetTime() - time;
 		time = glfwGetTime();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glfwPollEvents();	
 		glfwGetCursorPos(w, &xpos, &ypos);
 		camera.update(lastx - xpos, lasty - ypos, dt);
@@ -308,8 +309,8 @@ void App::run() {
 		lasty = ypos;
 		updateInputs();
 		camera.move(movement, dt);
-		//oslstuff.render(sphereVa, sphereSize, camera.getViewProjection());
-		forwardProgram.render(camera.view, camera.getViewProjection(), camera.cameraPos);
+		oslstuff.render(sphereVa, sphereSize, camera.getViewProjection());
+		//forwardProgram.render(camera.view, camera.getViewProjection(), camera.cameraPos);
 		glfwSwapBuffers(w);
 		int a = glGetError();
 		if (a) {
