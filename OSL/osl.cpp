@@ -176,7 +176,7 @@ void osl::render(GLuint va, int size, glm::mat4 vp)
 	glBindImageTexture(3, sphereTex,			0,	GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 
 
-	glDispatchCompute(16,16,1);
+	glDispatchCompute(textureRes/4, textureRes/4,1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 	glUseProgram(0);
 
