@@ -110,7 +110,7 @@ GLuint App::createSphereVBO(int resolution)
 			data[i*resolution + j] = {	x/2, //positions
 										y/2,
 										z/2,
-										x,//normals
+										x,	//normals
 										y,
 										z,
 										(float)j/(resolution-1), //uvs
