@@ -15,9 +15,16 @@ void main(){
 	vec3 pos = imageLoad(positionTex, storePos).xyz;
 	vec3 normal = normalize(imageLoad(normalTex, storePos).xyz);
 	vec4 color = imageLoad(srcTex, storePos);
-	vec3 lightvec = normalize(lightPos - pos);
-	vec3 diffuse = abs(dot(normal, lightvec))* color.rgb;
-	vec3 specular = abs(dot(normalize(camPos - pos), normalize(reflect(lightvec, normal)))) * color.rgb;
-	color = vec4(normal, 1); // diffuse+specular
+
+
+	vec3 diffuseVec = normalize(lightPos - pos);
+	float diffuse = dot(diffuseVec, normal);
+
+	vec3 eyeDir = normalize(lightPos - camPos);
+	vec3 vHalfVector = reflect(diffuseVec, normal);
+	float specular = pow(max(dot(eyeDir, vHalfVector),0.0), 20);
+
+
+	color = vec4((diffuse+ specular)*color.xyz, 1); // diffuse+specular
 	imageStore(destTex, storePos, color);
 }

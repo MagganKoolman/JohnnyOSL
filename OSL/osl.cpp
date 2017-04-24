@@ -54,6 +54,16 @@ void osl::init() {
 	glCompileShader(vertexShader);
 	printshaderError(vertexShader);
 	a.close();
+
+	GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+	a.open("textureGen.geom.glsl");
+	text = std::string(std::istreambuf_iterator<char>(a), std::istreambuf_iterator<char>());
+	textc = text.c_str();
+	glShaderSource(geometryShader, 1, &textc, NULL);
+	glCompileShader(geometryShader);
+	printshaderError(geometryShader);
+	a.close();
+
 	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	a.open("textureGen.frag.glsl");
 	text = std::string(std::istreambuf_iterator<char>(a), std::istreambuf_iterator<char>());
@@ -65,6 +75,7 @@ void osl::init() {
 
 	textureGenProg = glCreateProgram();
 	glAttachShader(textureGenProg, vertexShader);
+	glAttachShader(textureGenProg, geometryShader);
 	glAttachShader(textureGenProg, fragmentShader);
 	glLinkProgram(textureGenProg);
 
@@ -152,8 +163,8 @@ void osl::render(GLuint va, int size, glm::mat4 vp)
 	glUseProgram(oslprog);
 	glEnable(GL_TEXTURE_2D);
 	GLuint location;
-	float lightPos[3] = { 0.f, 10.f, 0.f };
-	float camPos[3] = { 0.f,0.f, 10.f};
+	float lightPos[3] = { 5.f, 5.f, 5.f };
+	float camPos[3] = { 0.f,0.f, 1.f};
 	location = glGetUniformLocation(oslprog, "lightPos");
 	glUniform3fv(location, 1, &lightPos[0]);
 	location = glGetUniformLocation(oslprog, "camPos");
