@@ -1,6 +1,5 @@
 #pragma once
 #include "osl.h"
-#include "Forward.h"
 #include "Camera.h"
 #include "GL\glew.h"
 #include "GLFW\glfw3.h"
@@ -27,12 +26,10 @@ private:
 	GLuint sphereVa;
 	GLuint cubeVa;
 	osl oslstuff;
-	Forward forwardProgram;
 	GLFWwindow* w;
 	Camera camera;
 	glm::mat4 cubeMatrices[25*25];
 	glm::mat4 sphereMatrices[25*25];
-
 
 	glm::vec3 movement = { 0,0,0 };
 public:
