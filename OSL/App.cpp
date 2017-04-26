@@ -371,8 +371,8 @@ void App::run() {
 	time = 0.0;
 	glfwSetTime(time);
 	oslstuff.generateTextures(sphereVa, sphereSize);
-	glFinish();
-	glMemoryBarrier(GL_ALL_BARRIER_BITS);
+	//glFinish();
+	//glMemoryBarrier(GL_ALL_BARRIER_BITS);
 	while(!glfwWindowShouldClose(w) && running){
 		dt = glfwGetTime() - time;
 		time = glfwGetTime();
