@@ -1,4 +1,4 @@
-#version 450
+#version 430
 
 uniform vec3 lightPos;
 uniform vec3 camPos;

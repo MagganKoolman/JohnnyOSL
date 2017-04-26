@@ -1,4 +1,4 @@
-#version 450
+#version 430
  
 in vec3 positionOut;
 in vec3 normalOut;
@@ -29,7 +29,7 @@ void main(){
 	//takeLock(imageCoord);
 
 	imageStore(positionTex, imageCoord, vec4(positionOut, 0));
-	imageStore(normalTex, imageCoord, vec4(normal, 0));
+	imageStore(normalTex, imageCoord, vec4(normalOut, 0));
 	
 	//releaseLock(imageCoord);
 
