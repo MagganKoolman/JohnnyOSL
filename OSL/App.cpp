@@ -79,7 +79,7 @@ App::App() {
 	oslstuff.init();
 
 	sphereSize = 0;
-	createSphereVBO(40);
+	createSphereVBO(100, 100);
 	createSpheres();
 
 	createCubeVBO();
@@ -89,6 +89,78 @@ App::~App(){
 
 }
 
+GLuint App::createSphereVBO(int xRes, int yRes) {
+	float pi = glm::pi<float>();
+	float xIncrement = (3.1415 * 2) / xRes;
+	float yIncrement = (3.1415) / (yRes-1);
+
+	std::vector<vtxData> data;
+	data.resize(xRes * (yRes+1));
+	//vtxData* data = new vtxData[];
+	float x, y, z;
+	for (int i = 0; i < yRes + 1; i++)
+	{
+		for (int j = 0; j < xRes; j++) {
+			x = sinf(j*xIncrement)*sinf(i*yIncrement);
+			y = cosf(i*yIncrement);
+			z = cosf(j*xIncrement)*sinf(i*yIncrement);
+			data[i*xRes + j] = { x / 2, //positions
+				y / 2,
+				z / 2,
+				x,	//normals
+				y,
+				z,
+				(float)j / (xRes), //uvs
+				1 - (float)i / (yRes)
+			};
+		}
+	}
+
+	std::vector<face> faceData;
+	vtxData t = { 1,1,1,1,1,1,1,1 };
+	faceData.resize(2 * xRes*yRes, { t,t,t });
+	//face* faceData = new face[2*newRes*(newRes/2+1)];
+	for (int i = 0; i < yRes-1; i++) {
+		for (int j = 0; j < xRes; j++) {
+			int a = i*xRes + j;
+			int b = i*xRes + (j + 1) % xRes;
+			int c = (i + 1)*xRes + j;
+			int d = (i + 1)*xRes + (j + 1) % xRes;
+			int index = 2 * (i*(xRes)+j);
+			vtxData va = data[a];
+			vtxData vb = data[b];
+			vtxData vc = data[c];
+			vtxData vd = data[d];
+			if (j == xRes - 1) {
+				vb.u = 1.0f;
+				vd.u = 1.0f;
+			}
+			faceData[index] = { va, vc, vb }; //winding order(?)
+			faceData[index + 1] = { vb, vc, vd }; //winding order(???)
+			sphereSize += 6;
+		}
+	}
+	GLuint vbo;
+	glGenVertexArrays(1, &sphereVa);
+	glBindVertexArray(sphereVa);
+
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(face)* faceData.size(), faceData.data(), GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vtxData), 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vtxData), (void*)offsetof(vtxData, x));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vtxData), (void*)offsetof(vtxData, u));
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	return sphereVa;
+}
 
 GLuint App::createSphereVBO(int resolution)
 {
@@ -109,7 +181,7 @@ GLuint App::createSphereVBO(int resolution)
 										x,	//normals
 										y,
 										z,
-										(float)j/(resolution-1), //uvs
+										(float)j/(resolution), //uvs
 										1-(float)i/(resolution/2)
 			};
 		}
@@ -125,9 +197,17 @@ GLuint App::createSphereVBO(int resolution)
 			int b = i*newRes + (j + 1) % newRes;
 			int c = (i + 1)*newRes + j;
 			int d = (i + 1)*newRes + (j + 1) % newRes;
-			int index = 2 * (i*newRes + j);
-			faceData[index] = { data[a],data[b],data[c] }; //winding order(?)
-			faceData[index + 1] = { data[b],data[c],data[d] }; //winding order(???)
+			int index = 2 * (i*(newRes) + j);
+			vtxData va = data[a];
+			vtxData vb = data[b];
+			vtxData vc = data[c];
+			vtxData vd = data[d];
+			if (j == newRes - 1) {
+				vb.u = 1.0f;
+				vd.u = 1.0f;
+			}
+			faceData[index] = { va, vc, vb }; //winding order(?)
+			faceData[index + 1] = { vb, vc, vd }; //winding order(???)
 			sphereSize += 6;
 		}
 	}
@@ -290,8 +370,9 @@ void App::run() {
 	double time, dt;
 	time = 0.0;
 	glfwSetTime(time);
-	oslstuff.generateTextures(cubeVa, 36);
+	oslstuff.generateTextures(sphereVa, sphereSize);
 	glFinish();
+	glMemoryBarrier(GL_ALL_BARRIER_BITS);
 	while(!glfwWindowShouldClose(w) && running){
 		dt = glfwGetTime() - time;
 		time = glfwGetTime();
@@ -303,7 +384,7 @@ void App::run() {
 		lasty = ypos;
 		updateInputs();
 		camera.move(movement, dt);
-		oslstuff.render(cubeVa, 36, camera.getViewProjection());
+		oslstuff.render(sphereVa, sphereSize, camera.getViewProjection(), camera.cameraPos);
 		glfwSwapBuffers(w);
 		int a = glGetError();
 		if (a) {

@@ -36,9 +36,9 @@ glm::mat4 Camera::getViewProjection()
 
 void Camera::move(glm::vec3 direction, float dt)
 {
-	this->cameraPos += this->cameraDir * direction.z * 10.f * dt;
-	this->cameraPos += this->cameraRight * direction.x * 10.f * dt;
-	this->cameraPos += glm::vec3(0, 1, 0)*direction.y * 10.f*dt;
+	this->cameraPos += this->cameraDir * direction.z * 2.f * dt;
+	this->cameraPos += this->cameraRight * direction.x * 2.f * dt;
+	this->cameraPos += glm::vec3(0, 1, 0)*direction.y * 2.f*dt;
 	/*
 	this->cameraPos += this->cameraDir * 10.f* dt;
 

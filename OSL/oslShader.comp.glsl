@@ -1,4 +1,4 @@
-#version 430
+#version 450
 
 uniform vec3 lightPos;
 uniform vec3 camPos;
@@ -13,7 +13,7 @@ layout(local_size_x = 4, local_size_y = 4) in;
 void main(){
 	ivec2 storePos = ivec2(gl_GlobalInvocationID.xy);
 	vec3 pos = imageLoad(positionTex, storePos).xyz;
-	vec3 normal = normalize(imageLoad(normalTex, storePos).xyz);
+	vec3 normal = imageLoad(normalTex, storePos).xyz;
 	vec4 color = imageLoad(srcTex, storePos);
 
 
@@ -22,9 +22,9 @@ void main(){
 
 	vec3 eyeDir = normalize(lightPos - camPos);
 	vec3 vHalfVector = reflect(diffuseVec, normal);
-	float specular = pow(max(dot(eyeDir, vHalfVector),0.0), 20);
+	float specular = pow(max(dot(eyeDir, vHalfVector),0.0), 200);
 
 
-	color = vec4((diffuse+ specular)*color.xyz, 1); // diffuse+specular
-	imageStore(destTex, storePos, color);
+	color = vec4((diffuse+specular)*color.xyz, 1); // diffuse+specular
+	imageStore(destTex, storePos, vec4(color.xyz, 1));
 }

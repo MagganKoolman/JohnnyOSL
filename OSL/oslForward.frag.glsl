@@ -1,4 +1,4 @@
-#version 430
+#version 450
  
 in vec2 uvOut;
 in vec3 normalOut;
@@ -10,5 +10,5 @@ uniform sampler2D diffTex;
 void main(){
 	vec2 uv = uvOut.xy + normalOut.xy-normalOut.xy;
 	fragment_color = vec4(texture(diffTex, uv).xyz, 1);
-	//fragment_color = vec4(normalOut, 1);
+	//fragment_color = vec4(uvOut, 0, 1);
 }

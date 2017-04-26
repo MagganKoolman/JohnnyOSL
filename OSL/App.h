@@ -36,6 +36,7 @@ public:
 	App();
 	~App();
 	void run();
+	GLuint createSphereVBO(int xRes, int yRes);
 	GLuint createSphereVBO(int resolution);
 	GLuint createCubeVBO();
 	void createCubes();
