@@ -1,7 +1,6 @@
 *.opendb
 Debug/*
 *.suo
-*.sln
 *.filters
 !OSL/*.cpp
 !OSL/*.h
@@ -10,7 +9,6 @@ Debug/*
 *.ilk
 *.obj
 *.tlog
-*.exe
 *.pdb
 *.ipch
 *.db
