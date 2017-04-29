@@ -20,4 +20,5 @@ private:
 	aLight* allLights;
 	GLuint lightBuffer;
 	float timer;
+	int nrOfLight;	
 };
