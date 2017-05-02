@@ -25,6 +25,7 @@ private:
 	int sphereSize;
 	GLuint sphereVa;
 	GLuint cubeVa;
+	GLuint fbo;
 	osl oslstuff;
 	GLFWwindow* w;
 	Camera camera;
@@ -42,5 +43,10 @@ public:
 	void createCubes();
 	void createSpheres();
 	void updateInputs();
+	void controls(float dt);
+
+	GLuint screenSaveTex;
+	void createFrameBuffer();
+	void saveFrameToFile(int nr);
 	GLuint loadTexture(std::string path);
 };

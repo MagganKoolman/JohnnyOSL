@@ -5,6 +5,7 @@
 #include <cassert>
 #include <set>
 #include <glm/gtc/matrix_transform.hpp>
+#include <fstream>
 
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
@@ -54,6 +55,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void App::updateInputs() {
 	movement = {  aDown + -1 *dDown, eDown + -1 * qDown, wDown + -1 * sDown };
 }
+
 App::App() {
 	glfwInit();
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
@@ -380,44 +382,93 @@ GLuint App::loadTexture(std::string path)
 	return tex;
 }
 
+void App::createFrameBuffer()
+{
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glGenTextures(1, &screenSaveTex);
+
+	glBindTexture(GL_TEXTURE_2D, screenSaveTex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, Camera::SCREEN_WIDTH * 2, Camera::SCREEN_HEIGHT * 2, 0, GL_RGBA, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenSaveTex, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void App::saveFrameToFile(int nr)
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+	glBlitFramebuffer(0, 0, Camera::SCREEN_WIDTH, Camera::SCREEN_HEIGHT, 0, 0, Camera::SCREEN_WIDTH, Camera::SCREEN_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+	std::vector<unsigned char> imgData(Camera::SCREEN_WIDTH * Camera::SCREEN_HEIGHT * 3);
+
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	glReadPixels(0, 0, Camera::SCREEN_WIDTH, Camera::SCREEN_HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, &imgData[0]);
+
+	int err = SOIL_save_image
+	(
+		"img.bmp",
+		SOIL_SAVE_TYPE_BMP,
+		Camera::SCREEN_WIDTH, Camera::SCREEN_HEIGHT, 3,
+		&imgData[0]
+	);
+}
+
+double xpos, ypos, lastx, lasty;
+void App::controls(float dt)
+{
+	glfwGetCursorPos(w, &xpos, &ypos);
+	camera.update(lastx - xpos, lasty - ypos, dt);
+	lastx = xpos;
+	lasty = ypos;
+	updateInputs();
+	camera.move(movement, dt);
+}
+
 void App::run() {
 	glClearColor(1.0, 0.0, 1.0, 1.0);
-	double xpos, ypos, lastx, lasty;
 	glfwGetCursorPos(w, &lastx, &lasty);
 	double time, dt;
 	time = 0.0;
 	glfwSetTime(time);
 	oslstuff.generateTextures(cubeVa, 36, oslstuff.cube);
 	oslstuff.generateTextures(sphereVa, sphereSize, oslstuff.sphere);
-	//glFinish();
-	//glMemoryBarrier(GL_ALL_BARRIER_BITS);
-	int counterFrames = 0;
-	float counterTime = 0.0f;
+	double runTime = 5;
+	double screenShotTimer = 2;
+	int nrOfScreenShots = 0;
+	int totalFrames = 0;
+	glfwSwapInterval(0);
 	while(!glfwWindowShouldClose(w) && running){
-		counterFrames++;
 		dt = glfwGetTime() - time;
-		counterTime += dt;
-		if (counterTime > 5) {
-			std::cout << counterFrames << std::endl;
-			counterFrames = 0;
-			counterTime = 0.0f;
-		}
 		time = glfwGetTime();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glfwPollEvents();	
-		glfwGetCursorPos(w, &xpos, &ypos);
-		camera.update(lastx - xpos, lasty - ypos, dt);
-		lastx = xpos;
-		lasty = ypos;
-		updateInputs();
-		camera.move(movement, dt);
+		//controls(dt);
 		oslstuff.render( camera.getViewProjection(), camera.cameraPos );
 		glfwSwapBuffers(w);
 		int a = glGetError();
 		if (a) {
 			std::cout << glewGetErrorString(a) << std::endl;
 		}
+		totalFrames++;
+		runTime -= dt;
+		if (runTime <= 0.0)
+			running = false;
+		screenShotTimer -= dt;
+		if (screenShotTimer < 0)
+		{
+			saveFrameToFile(nrOfScreenShots++);
+			screenShotTimer = 5;
+		}
 	}
+	std::ofstream logFile("log.txt");
+	logFile << totalFrames << "\n";
+	logFile.close();
 }
 
 void GLAPIENTRY gl_callback(GLenum source, GLenum type, GLuint id,
