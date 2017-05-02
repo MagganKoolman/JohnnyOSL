@@ -79,11 +79,15 @@ App::App() {
 	oslstuff.init();
 
 	sphereSize = 0;
-	createSphereVBO(100, 100);
+	oslstuff.sphere.va = createSphereVBO(20, 20);
+	oslstuff.sphere.size = sphereSize;
 	createSpheres();
-
+	oslstuff.createSphereTextures(24*12);
+	oslstuff.spheres = sphereMatrices;
+	//oslstuff.sphere.diffuseTex = loadTexture("textures/daSphere.png");
 	createCubeVBO();
 	createCubes();
+
 }
 App::~App(){
 
@@ -329,9 +333,9 @@ void App::createCubes()
 void App::createSpheres()
 {
 	int index = 0;
-	for (int i = 0; i < 13; i++)
+	for (int i = 0; i < 12; i++)
 	{
-		for (int j = 0; j < 13; j ++) {
+		for (int j = 0; j < 12; j++) {
 			sphereMatrices[index++] = glm::translate(glm::mat4(1), glm::vec3(i*2*2, -2, (j*2+1)*2));
 		}
 	}
@@ -384,7 +388,7 @@ void App::run() {
 		lasty = ypos;
 		updateInputs();
 		camera.move(movement, dt);
-		oslstuff.render(sphereVa, sphereSize, camera.getViewProjection(), camera.cameraPos);
+		oslstuff.render( camera.getViewProjection(), camera.cameraPos );
 		glfwSwapBuffers(w);
 		int a = glGetError();
 		if (a) {
