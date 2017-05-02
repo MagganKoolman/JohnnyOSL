@@ -90,7 +90,8 @@ App::App() {
 	oslstuff.cube.va = createCubeVBO();
 	oslstuff.cube.size = 36;
 	createCubes();
-	oslstuff.createCubeTextures(24*12);
+	//oslstuff.createCubeTextures(24*12);
+	oslstuff.nrOfCubes = 24 * 12;
 	oslstuff.cubes = cubeMatrices;
 }
 App::~App(){
@@ -326,6 +327,7 @@ void App::createCubes()
 		for (int j = 0; j < 12; j++) {
 			pos = glm::vec3(i * 2 * 2, -2, j * 2 * 2);
 			oslstuff.cubeInstances[index].hb.init(pos, radius);
+			oslstuff.cubeInstances[index].fixed = false;
 			cubeMatrices[index++] = glm::translate(glm::mat4(1), pos);
 		}
 	}
@@ -335,6 +337,7 @@ void App::createCubes()
 		for (int j = 0; j < 12; j++) {
 			pos = glm::vec3(i * 2 * 2, 2, (j * 2 + 1) * 2);
 			oslstuff.cubeInstances[index].hb.init(pos, radius);
+			oslstuff.cubeInstances[index].fixed = false;
 			cubeMatrices[index++] = glm::translate(glm::mat4(1), pos);
 		}
 	}
@@ -349,6 +352,7 @@ void App::createSpheres()
 		for (int j = 0; j < 12; j++) {
 			pos = glm::vec3(i*2*2, -2, (j*2+1)*2);
 			oslstuff.sphereInstances[index].hb.init(pos, 0.5f);
+			oslstuff.sphereInstances[index].fixed = false;
 			sphereMatrices[index++] = glm::translate(glm::mat4(1), pos);
 		}
 	}
@@ -358,6 +362,7 @@ void App::createSpheres()
 		for (int j = 0; j < 12; j ++) {
 			pos = glm::vec3(i * 2*2, 2, j *2* 2);
 			oslstuff.sphereInstances[index].hb.init(pos, 0.5f);
+			oslstuff.sphereInstances[index].fixed = false;
 			sphereMatrices[index++] = glm::translate(glm::mat4(1), pos);
 		}
 	}

@@ -231,11 +231,25 @@ void osl::render( glm::mat4 vp, glm::vec3 camPos )
 
 	for (int i = 0; i < nrOfSpheres; i++) {
 		//if (coutnerea % (2*i+1) == 0)
+		if (sphereInstances[i].lightsAffecting > 0) {
 			updateShading(camPos, sphere, sphereInstances[i], spheres[i], i);
+			sphereInstances[i].fixed = false;
+		}
+		else if (!sphereInstances[i].fixed) {
+			updateShading(camPos, sphere, sphereInstances[i], spheres[i], i);
+			sphereInstances[i].fixed = true;
+		}
 	}
 	for (int i = 0; i < nrOfCubes; i++) {
 		//if (coutnerea % (2*i+1) == 0)
-		updateShading(camPos, cube, cubeInstances[i], cubes[i], 288+i);
+		if (cubeInstances[i].lightsAffecting > 0){
+			updateShading(camPos, cube, cubeInstances[i], cubes[i], 288+i);
+			cubeInstances[i].fixed = false;
+		}
+		else if (!cubeInstances[i].fixed) {
+			updateShading(camPos, cube, cubeInstances[i], cubes[i], 288 + i);
+			cubeInstances[i].fixed = true;
+		}
 	}
 	//glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	glUseProgram(0);
@@ -304,7 +318,7 @@ void osl::updateShading(glm::vec3 &camPos, oslObject &object, oslInstance &insta
 	glBindImageTexture(2, object.diffuseTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
 	glBindImageTexture(3, megafuckTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-	glDispatchCompute(textureRes / 16, textureRes / 16, 1);
+	glDispatchCompute(textureRes / 8, textureRes / 8, 1);
 }
 void osl::generateTextures(GLuint va, int size, oslObject object)
 {

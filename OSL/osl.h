@@ -17,6 +17,7 @@ class osl {
 		Hitbox hb;
 		int32_t lights[10];
 		int lightsAffecting;
+		bool fixed;
 	};
 
 	
