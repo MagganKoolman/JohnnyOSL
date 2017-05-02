@@ -1,7 +1,7 @@
 #pragma once
 #include "GL\glew.h"
 #include "glm\glm.hpp"
-
+#include "Hitbox.h"
 #include "GLFW\glfw3.h"
 
 using namespace glm;
@@ -16,8 +16,10 @@ public:
 	void update(GLuint programID, float dt);
 	void init(GLuint programID, int nrOfLights);
 
-private:
 	aLight* allLights;
+	Hitbox* lightboxes;
+
+private:
 	GLuint lightBuffer;
 	float timer;
 	int nrOfLight;	
