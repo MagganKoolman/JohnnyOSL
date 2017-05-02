@@ -235,7 +235,7 @@ void osl::render( glm::mat4 vp, glm::vec3 camPos )
 	}
 	for (int i = 0; i < nrOfCubes; i++) {
 		//if (coutnerea % (2*i+1) == 0)
-		updateShading(camPos, cube, cubeInstances[i], cubes[i], i);
+		updateShading(camPos, cube, cubeInstances[i], cubes[i], 288+i);
 	}
 	//glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	glUseProgram(0);
@@ -268,8 +268,9 @@ void osl::renderInstances(glm::mat4 vp) {
 
 	glBindVertexArray(cube.va);
 
-	for (int i = 0; i < nrOfSpheres; i++) {
-		glBindTexture(GL_TEXTURE_2D, cubeInstances[i].tex);
+//	glBindTexture(GL_TEXTURE_2D, megafuckTex);
+	for (int i = 0; i < nrOfCubes; i++) {
+		glUniform1i(iLoc, 288+i);
 		glUniformMatrix4fv(location, 1, GL_FALSE, &cubes[i][0][0]);
 
 		glDrawArrays(GL_TRIANGLES, 0, cube.size);

@@ -60,9 +60,5 @@ void main(){
 	specular = max(specular, 0.0);
 	color = (0.2+diffuse+specular)*color; // diffuse+specular
 	//color = vec4(activeLights);
-	int r = int(megaTexIndex % 3 == 0);
-	int g = int((megaTexIndex+1) % 3 == 0);
-	int b = int((megaTexIndex+2) % 3 == 0);
-	color = vec4(r,g,b, 1);
 	imageStore(destTex, storePos, color);
 }
