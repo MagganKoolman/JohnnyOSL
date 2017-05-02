@@ -6,7 +6,7 @@ layout(binding = 2, rgba32f) uniform image2D srcTex;
 layout(binding = 3, rgba32f) uniform image2D destTex;
 
 
-layout(local_size_x = 4, local_size_y = 4) in;
+layout(local_size_x = 16, local_size_y = 16) in;
 
 uniform vec3 camPos;
 uniform mat4 world;
@@ -27,11 +27,17 @@ uniform int indices[10];
 
 uniform int activeLights;
 
+uniform int megaTexIndex;
+
 void main(){
 	ivec2 storePos = ivec2(gl_GlobalInvocationID.xy);
 	vec3 pos = (world * vec4(imageLoad(positionTex, storePos).xyz,1)).xyz;
 	vec3 normal = imageLoad(normalTex, storePos).xyz;
 	vec4 color = imageLoad(srcTex, storePos);
+
+	int xOffset = (megaTexIndex%32);
+	int yOffset = megaTexIndex / 32;
+	storePos += ivec2(xOffset*128, yOffset*128);
 
 	float diffuse = 0;
 	float specular = 0;
@@ -54,5 +60,9 @@ void main(){
 	specular = max(specular, 0.0);
 	color = (0.2+diffuse+specular)*color; // diffuse+specular
 	//color = vec4(activeLights);
+	int r = int(megaTexIndex % 3 == 0);
+	int g = int((megaTexIndex+1) % 3 == 0);
+	int b = int((megaTexIndex+2) % 3 == 0);
+	color = vec4(r,g,b, 1);
 	imageStore(destTex, storePos, color);
 }

@@ -21,8 +21,8 @@ class osl {
 
 	
 	public:			//"private" variables
-		const int textureRes = 256;
-		static const int maxObjects = 5000;
+		const int textureRes = 128;
+		static const int maxObjects = 500;
 		GLuint oslprog, textureGenProg, oslForward;
 		oslObject sphere, cube;
 		int nrOfSpheres;
@@ -36,6 +36,8 @@ class osl {
 		const int nrOfLights = 10;
 		GLuint indexBuffer;
 
+		GLuint megafuckTex;
+
 		GLuint lockTex;
 	public:
 		osl();
@@ -43,7 +45,7 @@ class osl {
 		void init();
 		void render( glm::mat4 vp, glm::vec3 camPos);
 		void renderInstances(glm::mat4 vp);
-		void updateShading(glm::vec3 &camPos, oslObject &object, oslInstance &instance, glm::mat4 &world);
+		void updateShading(glm::vec3 &camPos, oslObject &object, oslInstance &instance, glm::mat4 &world, int index);
 		void generateTextures(GLuint sphereVa, int sphereSize, oslObject object);
 		void createSphereTextures(int number);
 		void createCubeTextures(int number);

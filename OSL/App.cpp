@@ -443,6 +443,7 @@ void App::run() {
 	int nrOfScreenShots = 0;
 	int totalFrames = 0;
 	glfwSwapInterval(0);
+
 	while(!glfwWindowShouldClose(w) && running){
 		dt = glfwGetTime() - time;
 		time = glfwGetTime();

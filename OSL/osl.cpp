@@ -113,8 +113,8 @@ void osl::init() {
 		data[i] = {255, 0, 0, 255};
 	}*/
 
-	createTextures(&cube, "textures/rubik.png");
-	createTextures(&sphere, "textures/daSphere3.png");
+	createTextures(&cube, "textures/rubik128.png");
+	createTextures(&sphere, "textures/daSphere128.png");
 	
 
 	glGenTextures(1, &lockTex);
@@ -190,17 +190,17 @@ void osl::updateLights(oslInstance* instance, int number)
 }
 
 void osl::createSphereTextures(int number) {
-	for (int i = 0; i < number; i++) {
-		glGenTextures(1, &sphereInstances[i].tex);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, sphereInstances[i].tex);
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, textureRes, textureRes);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+	//for (int i = 0; i < number; i++) {
+	glGenTextures(1, &megafuckTex);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, megafuckTex);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, 4096, 4096);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	//}
 	nrOfSpheres = number;
 }
 
@@ -231,11 +231,11 @@ void osl::render( glm::mat4 vp, glm::vec3 camPos )
 
 	for (int i = 0; i < nrOfSpheres; i++) {
 		//if (coutnerea % (2*i+1) == 0)
-			updateShading(camPos, sphere, sphereInstances[i], spheres[i]);
+			updateShading(camPos, sphere, sphereInstances[i], spheres[i], i);
 	}
 	for (int i = 0; i < nrOfCubes; i++) {
 		//if (coutnerea % (2*i+1) == 0)
-		updateShading(camPos, cube, cubeInstances[i], cubes[i]);
+		updateShading(camPos, cube, cubeInstances[i], cubes[i], i);
 	}
 	//glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	glUseProgram(0);
@@ -257,8 +257,10 @@ void osl::renderInstances(glm::mat4 vp) {
 	GLuint texLoc = glGetUniformLocation(oslForward, "diffTex");
 	glUniform1i(texLoc, 0);
 	location = glGetUniformLocation(oslForward, "world");
+	GLuint iLoc = glGetUniformLocation(oslForward, "megaTexIndex");
+	glBindTexture(GL_TEXTURE_2D, megafuckTex);
 	for (int i = 0; i < nrOfSpheres; i++) {
-		glBindTexture(GL_TEXTURE_2D, sphereInstances[i].tex);
+		glUniform1i(iLoc, i);
 		glUniformMatrix4fv(location, 1, GL_FALSE, &spheres[i][0][0]);
 
 		glDrawArrays(GL_TRIANGLES, 0, sphere.size);
@@ -277,7 +279,7 @@ void osl::renderInstances(glm::mat4 vp) {
 	glUseProgram(0);
 }
 
-void osl::updateShading(glm::vec3 &camPos, oslObject &object, oslInstance &instance, glm::mat4 &world) {
+void osl::updateShading(glm::vec3 &camPos, oslObject &object, oslInstance &instance, glm::mat4 &world, int index) {
 	float lightPos[3] = { 1.f, 0.f, 1.5f };
 	GLuint location;
 	//glBufferData(GL_UNIFORM_BUFFER, sizeof(int) * 10, instance.lights, GL_DYNAMIC_DRAW);
@@ -293,13 +295,15 @@ void osl::updateShading(glm::vec3 &camPos, oslObject &object, oslInstance &insta
 	glUniform3fv(location, 1, &camPos[0]);
 	location = glGetUniformLocation(oslprog, "world");
 	glUniformMatrix4fv(location, 1, GL_FALSE, &world[0][0]);
+	location = glGetUniformLocation(oslprog, "megaTexIndex");
+	glUniform1i(location, index);
 
 	glBindImageTexture(0, object.positionTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 	glBindImageTexture(1, object.normalTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 	glBindImageTexture(2, object.diffuseTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
-	glBindImageTexture(3, instance.tex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-	glDispatchCompute(textureRes / 4, textureRes / 4, 1);
+	glBindImageTexture(3, megafuckTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	glDispatchCompute(textureRes / 16, textureRes / 16, 1);
 }
 void osl::generateTextures(GLuint va, int size, oslObject object)
 {
