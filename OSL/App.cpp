@@ -85,9 +85,11 @@ App::App() {
 	oslstuff.createSphereTextures(24*12);
 	oslstuff.spheres = sphereMatrices;
 	//oslstuff.sphere.diffuseTex = loadTexture("textures/daSphere.png");
-	createCubeVBO();
+	oslstuff.cube.va = createCubeVBO();
+	oslstuff.cube.size = 36;
 	createCubes();
-
+	oslstuff.createCubeTextures(24*12);
+	oslstuff.cubes = cubeMatrices;
 }
 App::~App(){
 
@@ -115,7 +117,7 @@ GLuint App::createSphereVBO(int xRes, int yRes) {
 				y,
 				z,
 				(float)j / (xRes), //uvs
-				1 - (float)i / (yRes)
+				(float)i / (yRes)
 			};
 		}
 	}
@@ -315,17 +317,23 @@ GLuint App::createCubeVBO()
 void App::createCubes()
 {
 	int index = 0;
-	for (int i = 0; i < 13; i++)
+	glm::vec3 pos;
+	float radius = sqrtf(3)/2;
+	for (int i = 0; i < 12; i++)
 	{
-		for (int j = 0; j < 13; j++) {
-			cubeMatrices[index++] = glm::translate(glm::mat4(1), glm::vec3(i *2* 2, -2, j*2*2));
+		for (int j = 0; j < 12; j++) {
+			pos = glm::vec3(i * 2 * 2, -2, j * 2 * 2);
+			oslstuff.cubeInstances[index].hb.init(pos, radius);
+			cubeMatrices[index++] = glm::translate(glm::mat4(1), pos);
 		}
 	}
 
 	for (int i = 0; i < 12; i++)
 	{
 		for (int j = 0; j < 12; j++) {
-			cubeMatrices[index++] = glm::translate(glm::mat4(1), glm::vec3(i *2* 2, 2, (j*2+1) * 2));
+			pos = glm::vec3(i * 2 * 2, 2, (j * 2 + 1) * 2);
+			oslstuff.cubeInstances[index].hb.init(pos, radius);
+			cubeMatrices[index++] = glm::translate(glm::mat4(1), pos);
 		}
 	}
 }
@@ -333,17 +341,22 @@ void App::createCubes()
 void App::createSpheres()
 {
 	int index = 0;
+	glm::vec3 pos;
 	for (int i = 0; i < 12; i++)
 	{
 		for (int j = 0; j < 12; j++) {
-			sphereMatrices[index++] = glm::translate(glm::mat4(1), glm::vec3(i*2*2, -2, (j*2+1)*2));
+			pos = glm::vec3(i*2*2, -2, (j*2+1)*2);
+			oslstuff.sphereInstances[index].hb.init(pos, 0.5f);
+			sphereMatrices[index++] = glm::translate(glm::mat4(1), pos);
 		}
 	}
 
 	for (int i = 0; i < 12; i++)
 	{
 		for (int j = 0; j < 12; j ++) {
-			sphereMatrices[index++] = glm::translate(glm::mat4(1), glm::vec3(i * 2*2, 2, j *2* 2));
+			pos = glm::vec3(i * 2*2, 2, j *2* 2);
+			oslstuff.sphereInstances[index].hb.init(pos, 0.5f);
+			sphereMatrices[index++] = glm::translate(glm::mat4(1), pos);
 		}
 	}
 }
@@ -374,11 +387,21 @@ void App::run() {
 	double time, dt;
 	time = 0.0;
 	glfwSetTime(time);
-	oslstuff.generateTextures(sphereVa, sphereSize);
+	oslstuff.generateTextures(cubeVa, 36, oslstuff.cube);
+	oslstuff.generateTextures(sphereVa, sphereSize, oslstuff.sphere);
 	//glFinish();
 	//glMemoryBarrier(GL_ALL_BARRIER_BITS);
+	int counterFrames = 0;
+	float counterTime = 0.0f;
 	while(!glfwWindowShouldClose(w) && running){
+		counterFrames++;
 		dt = glfwGetTime() - time;
+		counterTime += dt;
+		if (counterTime > 5) {
+			std::cout << counterFrames << std::endl;
+			counterFrames = 0;
+			counterTime = 0.0f;
+		}
 		time = glfwGetTime();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glfwPollEvents();	

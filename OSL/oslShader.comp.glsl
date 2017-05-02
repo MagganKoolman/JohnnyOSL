@@ -16,13 +16,16 @@ struct Light{
 	vec4 colora;
 };
 
-const int nrOfLights = 20;
+const int nrOfLights = 10;
 
 layout(std140) uniform Lights
 {
-  Light lights[nrOfLights];
+	Light lights[nrOfLights];
 };
 
+uniform int indices[10];
+
+uniform int activeLights;
 
 void main(){
 	ivec2 storePos = ivec2(gl_GlobalInvocationID.xy);
@@ -33,17 +36,23 @@ void main(){
 	float diffuse = 0;
 	float specular = 0;
 	float attunuation;
-	for( int i =0; i < nrOfLights; i++){
-		if(length(lights[i].position.xyz - pos) < lights[i].position.w){  
-			vec3 diffuseVec = normalize(lights[i].position.xyz - pos);
+	int index = 0;
+	vec3 lightpos;
+	for( int i = 0; i < activeLights; i++){
+		index = indices[i];
+		lightpos = lights[index].position.xyz;
+		if(length(lightpos - pos) < lights[index].position.w){  
+			vec3 diffuseVec = normalize(lightpos - pos);
 			diffuse += dot(diffuseVec, normal);
 
-			vec3 eyeDir = normalize(lights[i].position.xyz - camPos);
+			vec3 eyeDir = normalize(lightpos - camPos);
 			vec3 vHalfVector = reflect(diffuseVec, normal);
 			specular += pow(max(dot(eyeDir, vHalfVector),0.0), 20);
 		}
 	}
-
-	color = vec4((diffuse+specular)*color.xyz, 1); // diffuse+specular
-	imageStore(destTex, storePos, vec4(color.xyz, 1));
+	diffuse = max(diffuse, 0.0);
+	specular = max(specular, 0.0);
+	color = (0.2+diffuse+specular)*color; // diffuse+specular
+	//color = vec4(activeLights);
+	imageStore(destTex, storePos, color);
 }

@@ -113,43 +113,8 @@ void osl::init() {
 		data[i] = {255, 0, 0, 255};
 	}*/
 
-
-	glEnable(GL_TEXTURE_2D);
-	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &sphere.positionTex);
-	glBindTexture(GL_TEXTURE_2D, sphere.positionTex);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, textureRes, textureRes);// , 0, GL_RGBA, GL_FLOAT, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glGenTextures(1, &sphere.normalTex);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, sphere.normalTex);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, textureRes, textureRes);// , 0, GL_RGBA, GL_FLOAT, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	int width, height, channels;
-	unsigned char* data = SOIL_load_image("textures/daSphere.png", &width, &height, &channels, 4);
-
-	glGenTextures(1, &sphere.diffuseTex);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, sphere.diffuseTex);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, width, height);// , 0, GL_RGBA, GL_FLOAT, nullptr);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-
+	createTextures(&cube, "textures/rubik.png");
+	createTextures(&sphere, "textures/daSphere3.png");
 	
 
 	glGenTextures(1, &lockTex);
@@ -158,9 +123,70 @@ void osl::init() {
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32UI, textureRes, textureRes);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	delete data;
 
-	lights.init(oslprog, 20);
+	lights.init(oslprog, nrOfLights);
+
+	/*GLint indexLoc = glGetUniformBlockIndex(oslprog, "Indices");
+	GLint blockSize;
+	glGetActiveUniformBlockiv(oslprog, indexLoc, GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
+	int size = sizeof(int) * nrOfLights * 4;
+	if (blockSize != size)
+		printf("Index uniform block and CPU buffer are not same size!!!! Bad!!!\n");
+
+	glGenBuffers(1, &this->indexBuffer);*/
+}
+void osl::createTextures(oslObject* obj, std::string path) {
+
+	glEnable(GL_TEXTURE_2D);
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &obj->positionTex);
+	glBindTexture(GL_TEXTURE_2D, obj->positionTex);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, textureRes, textureRes);// , 0, GL_RGBA, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glGenTextures(1, &obj->normalTex);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, obj->normalTex);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, textureRes, textureRes);// , 0, GL_RGBA, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	int width, height, channels;
+	unsigned char* data = SOIL_load_image(path.c_str(), &width, &height, &channels, 4);
+
+	glGenTextures(1, &obj->diffuseTex);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, obj->diffuseTex);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, width, height);// , 0, GL_RGBA, GL_FLOAT, nullptr);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	delete data;
+}
+
+void osl::updateLights(oslInstance* instance, int number)
+{
+
+	for (int i = 0; i < number; i++) {
+		instance[i].lightsAffecting = 0;
+		for (int j = 0; j < nrOfLights; j++) {
+			if (instance[i].hb.intersect(&lights.lightboxes[j])) {
+				int index = instance[i].lightsAffecting++;
+				instance[i].lights[index] = j;
+			}
+		}
+	}
 }
 
 void osl::createSphereTextures(int number) {
@@ -196,11 +222,23 @@ int coutnerea = 0;
 void osl::render( glm::mat4 vp, glm::vec3 camPos )
 {
 	coutnerea++;
+	updateLights(sphereInstances, nrOfSpheres);
+	updateLights(cubeInstances, nrOfCubes);
 	lights.update(oslprog, 0.05f);
+	glUseProgram(oslprog);
+	glEnable(GL_TEXTURE_2D);
+	//glBindBuffer(GL_UNIFORM_BUFFER, this->indexBuffer);
+
 	for (int i = 0; i < nrOfSpheres; i++) {
 		//if (coutnerea % (2*i+1) == 0)
 			updateShading(camPos, sphere, sphereInstances[i], spheres[i]);
 	}
+	for (int i = 0; i < nrOfCubes; i++) {
+		//if (coutnerea % (2*i+1) == 0)
+		updateShading(camPos, cube, cubeInstances[i], cubes[i]);
+	}
+	//glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	glUseProgram(0);
 	glFinish();
 	renderInstances(vp);
 }
@@ -225,17 +263,32 @@ void osl::renderInstances(glm::mat4 vp) {
 
 		glDrawArrays(GL_TRIANGLES, 0, sphere.size);
 	}
+
+	glBindVertexArray(cube.va);
+
+	for (int i = 0; i < nrOfSpheres; i++) {
+		glBindTexture(GL_TEXTURE_2D, cubeInstances[i].tex);
+		glUniformMatrix4fv(location, 1, GL_FALSE, &cubes[i][0][0]);
+
+		glDrawArrays(GL_TRIANGLES, 0, cube.size);
+	}
+
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
 }
 
-void osl::updateShading(glm::vec3 camPos, oslObject object, oslInstance instance, glm::mat4 world) {
-	glUseProgram(oslprog);
-	glEnable(GL_TEXTURE_2D);
+void osl::updateShading(glm::vec3 &camPos, oslObject &object, oslInstance &instance, glm::mat4 &world) {
 	float lightPos[3] = { 1.f, 0.f, 1.5f };
+	GLuint location;
+	//glBufferData(GL_UNIFORM_BUFFER, sizeof(int) * 10, instance.lights, GL_DYNAMIC_DRAW);
 
-	GLuint location = glGetUniformLocation(oslprog, "lightPos");
-	glUniform3fv(location, 1, &lightPos[0]);
+	GLint indexLoc = glGetUniformLocation(oslprog, "indices");
+	glUniform1iv(indexLoc, 10, instance.lights);
+	//glBindBufferBase(GL_UNIFORM_BUFFER, indexLoc, this->indexBuffer);
+
+	location = glGetUniformLocation(oslprog, "activeLights");
+	glUniform1i(location, instance.lightsAffecting);
+
 	location = glGetUniformLocation(oslprog, "camPos");
 	glUniform3fv(location, 1, &camPos[0]);
 	location = glGetUniformLocation(oslprog, "world");
@@ -247,9 +300,8 @@ void osl::updateShading(glm::vec3 camPos, oslObject object, oslInstance instance
 
 	glBindImageTexture(3, instance.tex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 	glDispatchCompute(textureRes / 4, textureRes / 4, 1);
-	glUseProgram(0);
 }
-void osl::generateTextures(GLuint va, int size)
+void osl::generateTextures(GLuint va, int size, oslObject object)
 {
 	glUseProgram(textureGenProg);
 	glBindVertexArray(va);
@@ -259,8 +311,8 @@ void osl::generateTextures(GLuint va, int size)
 	location = glGetUniformLocation(textureGenProg, "normalTex");
 	glUniform1i(location, sphere.normalTex);*/
 	
-	glBindImageTexture(0, sphere.positionTex,	0,	GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-	glBindImageTexture(1, sphere.normalTex,		0,	GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	glBindImageTexture(0, object.positionTex,	0,	GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	glBindImageTexture(1, object.normalTex,		0,	GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 	glBindImageTexture(2, lockTex,				0,	GL_FALSE, 0, GL_READ_WRITE, GL_R32UI);
 
 	//GLuint a[2] = { sphere.normalTex, sphere.positionTex };

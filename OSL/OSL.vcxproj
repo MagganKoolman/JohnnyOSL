@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Hitbox.cpp" />
     <ClCompile Include="Lights.cpp" />
     <ClCompile Include="osl.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -28,6 +29,7 @@
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Hitbox.h" />
     <ClInclude Include="Lights.h" />
     <ClInclude Include="osl.h" />
   </ItemGroup>
