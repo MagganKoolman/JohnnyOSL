@@ -266,17 +266,17 @@ void osl::renderInstances(glm::mat4 vp) {
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
 
-	GLuint location = glGetUniformLocation(oslForward, "viewProjection");
-	glUniformMatrix4fv(location, 1, GL_FALSE, &vp[0][0]);
+	//GLuint location = glGetUniformLocation(oslForward, "viewProjection");
+	glUniformMatrix4fv(1, 1, GL_FALSE, &vp[0][0]);
 	glActiveTexture(GL_TEXTURE0);
-	GLuint texLoc = glGetUniformLocation(oslForward, "diffTex");
-	glUniform1i(texLoc, 0);
-	location = glGetUniformLocation(oslForward, "world");
-	GLuint iLoc = glGetUniformLocation(oslForward, "megaTexIndex");
+	//GLuint texLoc = glGetUniformLocation(oslForward, "diffTex");
+	glUniform1i(0, 0);
+	//location = glGetUniformLocation(oslForward, "world");
+	//GLuint iLoc = glGetUniformLocation(oslForward, "megaTexIndex");
 	glBindTexture(GL_TEXTURE_2D, megaTex);
 	for (int i = 0; i < nrOfSpheres; i++) {
-		glUniform1i(iLoc, i);
-		glUniformMatrix4fv(location, 1, GL_FALSE, &spheres[i][0][0]);
+		glUniform1i(3, i);
+		glUniformMatrix4fv(2, 1, GL_FALSE, &spheres[i][0][0]);
 
 		glDrawArrays(GL_TRIANGLES, 0, sphere.size);
 	}
@@ -285,8 +285,8 @@ void osl::renderInstances(glm::mat4 vp) {
 
 //	glBindTexture(GL_TEXTURE_2D, megaTex);
 	for (int i = 0; i < nrOfCubes; i++) {
-		glUniform1i(iLoc, 288+i);
-		glUniformMatrix4fv(location, 1, GL_FALSE, &cubes[i][0][0]);
+		glUniform1i(3, 288+i);
+		glUniformMatrix4fv(2, 1, GL_FALSE, &cubes[i][0][0]);
 
 		glDrawArrays(GL_TRIANGLES, 0, cube.size);
 	}
@@ -311,7 +311,7 @@ void osl::updateShading( oslObject &object, oslInstance &instance, glm::mat4 &wo
 
 	//GLint indexLoc = glGetUniformLocation(oslprog, "indices");
 	glUniform1iv(7, 10, instance.lights);
-	//glBindBufferBase(GL_UNIFORM_BUFFER, indexLoc, this->indexBuffer);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 7, this->indexBuffer);
 
 	//location = glGetUniformLocation(oslprog, "activeLights");
 	glUniform1i(6, instance.lightsAffecting);

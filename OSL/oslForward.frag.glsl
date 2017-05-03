@@ -5,7 +5,7 @@ in vec3 normalOut;
 
 out vec4 fragment_color;
 
-uniform sampler2D diffTex;
+layout(location = 0) uniform sampler2D diffTex;
 
 
 
