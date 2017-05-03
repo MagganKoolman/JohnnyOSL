@@ -49,4 +49,5 @@ void Lights::init(GLuint programID, int nrOfLights)
 		this->lightboxes[i].init(pos, 5);
 	}
 	this->nrOfLight = nrOfLights;
+	update(programID, 0.05f);
 }

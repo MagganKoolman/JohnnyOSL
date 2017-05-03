@@ -417,7 +417,7 @@ void App::saveFrameToFile(int nr)
 
 	int err = SOIL_save_image
 	(
-		"img.bmp",
+		"C:/Users/Maggan/Desktop/bilder/imgOSL.bmp",
 		SOIL_SAVE_TYPE_BMP,
 		Camera::SCREEN_WIDTH, Camera::SCREEN_HEIGHT, 3,
 		&imgData[0]
@@ -455,7 +455,7 @@ void App::run() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glfwPollEvents();	
 		//controls(dt);
-		oslstuff.render( camera.getViewProjection(), camera.cameraPos );
+		oslstuff.render( camera.getViewProjection(), camera.cameraPos, 0.05f);
 		glfwSwapBuffers(w);
 		int a = glGetError();
 		if (a) {
@@ -465,11 +465,11 @@ void App::run() {
 		runTime -= dt;
 		if (runTime <= 0.0)
 			running = false;
-		screenShotTimer -= dt;
+		screenShotTimer -= 0.05f;
 		if (screenShotTimer < 0)
 		{
 			saveFrameToFile(nrOfScreenShots++);
-			screenShotTimer = 5;
+			screenShotTimer = 60000;
 		}
 	}
 	std::ofstream logFile("log.txt");

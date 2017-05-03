@@ -219,12 +219,12 @@ void osl::createCubeTextures(int number) {
 	nrOfCubes = number;
 }
 int coutnerea = 0;
-void osl::render( glm::mat4 vp, glm::vec3 camPos )
+void osl::render( glm::mat4 vp, glm::vec3 camPos, float dt )
 {
 	coutnerea++;
 	updateLights(sphereInstances, nrOfSpheres);
 	updateLights(cubeInstances, nrOfCubes);
-	lights.update(oslprog, 0.05f);
+	//lights.update(oslprog, dt);
 	glUseProgram(oslprog);
 	glEnable(GL_TEXTURE_2D);
 	//glBindBuffer(GL_UNIFORM_BUFFER, this->indexBuffer);
