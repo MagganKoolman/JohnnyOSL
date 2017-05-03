@@ -7,10 +7,10 @@ in vec2 uv;
 out vec2 uvOut;
 out vec3 normalOut;
 
-uniform mat4 viewProjection;
-uniform mat4 world;
+layout(location = 1) uniform mat4 viewProjection;
+layout(location = 2) uniform mat4 world;
 
-uniform int megaTexIndex;
+layout(location = 3) uniform int megaTexIndex;
 
 void main(){
 	gl_Position = viewProjection * world * vec4(position, 1);
