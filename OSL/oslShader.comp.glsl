@@ -8,8 +8,8 @@ layout(binding = 3, rgba32f) uniform image2D destTex;
 
 layout(local_size_x = 8, local_size_y = 8) in;
 
-uniform vec3 camPos;
-uniform mat4 world;
+layout(location = 1) uniform vec3 camPos;
+layout(location = 2) uniform mat4 world;
 
 struct Light{
 	vec4 position;
@@ -23,11 +23,11 @@ layout(std140) uniform Lights
 	Light lights[nrOfLights];
 };
 
-uniform int indices[10];
+layout(location = 7) uniform int indices[10];
 
-uniform int activeLights;
+layout(location = 6) uniform int activeLights;
 
-uniform int megaTexIndex;
+layout(location = 5) uniform int megaTexIndex;
 
 void main(){
 	ivec2 storePos = ivec2(gl_GlobalInvocationID.xy);

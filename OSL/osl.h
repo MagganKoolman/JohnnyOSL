@@ -37,7 +37,7 @@ class osl {
 		const int nrOfLights = 10;
 		GLuint indexBuffer;
 
-		GLuint megafuckTex;
+		GLuint megaTex;
 
 		GLuint lockTex;
 	public:
@@ -46,10 +46,11 @@ class osl {
 		void init();
 		void render( glm::mat4 vp, glm::vec3 camPos);
 		void renderInstances(glm::mat4 vp);
-		void updateShading(glm::vec3 &camPos, oslObject &object, oslInstance &instance, glm::mat4 &world, int index);
+		void updateShading(oslObject &object, oslInstance &instance, glm::mat4 &world, int index);
 		void generateTextures(GLuint sphereVa, int sphereSize, oslObject object);
 		void createSphereTextures(int number);
 		void createCubeTextures(int number);
 		void createTextures(oslObject* obj, std::string path);
 		void updateLights(oslInstance* instance, int number);
+		void setupShading(glm::vec3 &camPos, oslObject* obj);
 };

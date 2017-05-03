@@ -191,9 +191,9 @@ void osl::updateLights(oslInstance* instance, int number)
 
 void osl::createSphereTextures(int number) {
 	//for (int i = 0; i < number; i++) {
-	glGenTextures(1, &megafuckTex);
+	glGenTextures(1, &megaTex);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, megafuckTex);
+	glBindTexture(GL_TEXTURE_2D, megaTex);
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, 4096, 4096);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -228,26 +228,27 @@ void osl::render( glm::mat4 vp, glm::vec3 camPos )
 	glUseProgram(oslprog);
 	glEnable(GL_TEXTURE_2D);
 	//glBindBuffer(GL_UNIFORM_BUFFER, this->indexBuffer);
-
+	setupShading(camPos, &sphere);
 	for (int i = 0; i < nrOfSpheres; i++) {
 		//if (coutnerea % (2*i+1) == 0)
 		if (sphereInstances[i].lightsAffecting > 0) {
-			updateShading(camPos, sphere, sphereInstances[i], spheres[i], i);
+			updateShading(sphere, sphereInstances[i], spheres[i], i);
 			sphereInstances[i].fixed = false;
 		}
 		else if (!sphereInstances[i].fixed) {
-			updateShading(camPos, sphere, sphereInstances[i], spheres[i], i);
+			updateShading(sphere, sphereInstances[i], spheres[i], i);
 			sphereInstances[i].fixed = true;
 		}
 	}
+	setupShading(camPos, &cube);
 	for (int i = 0; i < nrOfCubes; i++) {
 		//if (coutnerea % (2*i+1) == 0)
 		if (cubeInstances[i].lightsAffecting > 0){
-			updateShading(camPos, cube, cubeInstances[i], cubes[i], 288+i);
+			updateShading(cube, cubeInstances[i], cubes[i], 288+i);
 			cubeInstances[i].fixed = false;
 		}
 		else if (!cubeInstances[i].fixed) {
-			updateShading(camPos, cube, cubeInstances[i], cubes[i], 288 + i);
+			updateShading(cube, cubeInstances[i], cubes[i], 288 + i);
 			cubeInstances[i].fixed = true;
 		}
 	}
@@ -272,7 +273,7 @@ void osl::renderInstances(glm::mat4 vp) {
 	glUniform1i(texLoc, 0);
 	location = glGetUniformLocation(oslForward, "world");
 	GLuint iLoc = glGetUniformLocation(oslForward, "megaTexIndex");
-	glBindTexture(GL_TEXTURE_2D, megafuckTex);
+	glBindTexture(GL_TEXTURE_2D, megaTex);
 	for (int i = 0; i < nrOfSpheres; i++) {
 		glUniform1i(iLoc, i);
 		glUniformMatrix4fv(location, 1, GL_FALSE, &spheres[i][0][0]);
@@ -282,7 +283,7 @@ void osl::renderInstances(glm::mat4 vp) {
 
 	glBindVertexArray(cube.va);
 
-//	glBindTexture(GL_TEXTURE_2D, megafuckTex);
+//	glBindTexture(GL_TEXTURE_2D, megaTex);
 	for (int i = 0; i < nrOfCubes; i++) {
 		glUniform1i(iLoc, 288+i);
 		glUniformMatrix4fv(location, 1, GL_FALSE, &cubes[i][0][0]);
@@ -294,30 +295,34 @@ void osl::renderInstances(glm::mat4 vp) {
 	glUseProgram(0);
 }
 
-void osl::updateShading(glm::vec3 &camPos, oslObject &object, oslInstance &instance, glm::mat4 &world, int index) {
+void osl::setupShading(glm::vec3 &camPos, oslObject* obj) {
+
+	glBindImageTexture(0, obj->positionTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+	glBindImageTexture(1, obj->normalTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+	glBindImageTexture(2, obj->diffuseTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+
+	glBindImageTexture(3, megaTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	glUniform3fv(1, 1, &camPos[0]);
+}
+void osl::updateShading( oslObject &object, oslInstance &instance, glm::mat4 &world, int index) {
 	float lightPos[3] = { 1.f, 0.f, 1.5f };
 	GLuint location;
 	//glBufferData(GL_UNIFORM_BUFFER, sizeof(int) * 10, instance.lights, GL_DYNAMIC_DRAW);
 
-	GLint indexLoc = glGetUniformLocation(oslprog, "indices");
-	glUniform1iv(indexLoc, 10, instance.lights);
+	//GLint indexLoc = glGetUniformLocation(oslprog, "indices");
+	glUniform1iv(7, 10, instance.lights);
 	//glBindBufferBase(GL_UNIFORM_BUFFER, indexLoc, this->indexBuffer);
 
-	location = glGetUniformLocation(oslprog, "activeLights");
-	glUniform1i(location, instance.lightsAffecting);
+	//location = glGetUniformLocation(oslprog, "activeLights");
+	glUniform1i(6, instance.lightsAffecting);
 
-	location = glGetUniformLocation(oslprog, "camPos");
-	glUniform3fv(location, 1, &camPos[0]);
-	location = glGetUniformLocation(oslprog, "world");
-	glUniformMatrix4fv(location, 1, GL_FALSE, &world[0][0]);
-	location = glGetUniformLocation(oslprog, "megaTexIndex");
-	glUniform1i(location, index);
+	//location = glGetUniformLocation(oslprog, "camPos");
+	//location = glGetUniformLocation(oslprog, "world");
+	glUniformMatrix4fv(2, 1, GL_FALSE, &world[0][0]);
+	//location = glGetUniformLocation(oslprog, "megaTexIndex");
+	glUniform1i(5, index);
 
-	glBindImageTexture(0, object.positionTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
-	glBindImageTexture(1, object.normalTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
-	glBindImageTexture(2, object.diffuseTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
-	glBindImageTexture(3, megafuckTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 	glDispatchCompute(textureRes / 8, textureRes / 8, 1);
 }
 void osl::generateTextures(GLuint va, int size, oslObject object)
