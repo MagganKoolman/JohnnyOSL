@@ -17,7 +17,6 @@ layout(location = 4) uniform int divider[2];
 void main(){
 	gl_Position = viewProjection * world * vec4(position, 1);
 	uvOut = vec2(uv.x/divider[0], uv.y/divider[1]);
-	
 	uvOut += vec2(
 				(1.0/divider[0]) * (megaSphereTexIndex % divider[0]),		//x
 				(1.0/divider[1]) * (megaSphereTexIndex / divider[0])		//y
