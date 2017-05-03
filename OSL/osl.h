@@ -10,6 +10,7 @@ class osl {
 	struct oslObject{
 		GLuint positionTex, normalTex, diffuseTex;
 		GLuint va;
+		GLuint megaTex;
 		int size;
 	};
 	struct oslInstance {
@@ -22,7 +23,8 @@ class osl {
 
 	
 	public:			//"private" variables
-		const int textureRes = 128;
+		int textureRes;
+		int shaderResInput[2];
 		static const int maxObjects = 500;
 		GLuint oslprog, textureGenProg, oslForward;
 		oslObject sphere, cube;
@@ -37,13 +39,15 @@ class osl {
 		const int nrOfLights = 10;
 		GLuint indexBuffer;
 
-		GLuint megaTex;
+		GLuint megaSphereTex;
+		GLuint megaCubeTex;
 
 		GLuint lockTex;
+		bool dynamic;
 	public:
 		osl();
 		~osl();
-		void init();
+		void init(bool mode, bool resolution);
 		void render( glm::mat4 vp, glm::vec3 camPos);
 		void renderInstances(glm::mat4 vp);
 		void updateShading(oslObject &object, oslInstance &instance, glm::mat4 &world, int index);

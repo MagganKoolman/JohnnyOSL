@@ -23,11 +23,12 @@ layout(std140) uniform Lights
 	Light lights[nrOfLights];
 };
 
+layout(location = 4) uniform int divider; 
 layout(location = 7) uniform int indices[10];
 
 layout(location = 6) uniform int activeLights;
 
-layout(location = 5) uniform int megaTexIndex;
+layout(location = 5) uniform int megaSphereTexIndex;
 
 void main(){
 	ivec2 storePos = ivec2(gl_GlobalInvocationID.xy);
@@ -35,9 +36,10 @@ void main(){
 	vec3 normal = imageLoad(normalTex, storePos).xyz;
 	vec4 color = imageLoad(srcTex, storePos);
 
-	int xOffset = (megaTexIndex%32);
-	int yOffset = megaTexIndex / 32;
-	storePos += ivec2(xOffset*128, yOffset*128);
+	int xOffset = (megaSphereTexIndex % divider);
+	int yOffset = megaSphereTexIndex / divider;
+	int resolution = 4096 / divider;
+	storePos += ivec2(xOffset * resolution, yOffset * resolution);
 
 	float diffuse = 0;
 	float specular = 0;

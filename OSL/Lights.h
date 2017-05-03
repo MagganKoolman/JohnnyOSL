@@ -18,6 +18,7 @@ public:
 
 	aLight* allLights;
 	Hitbox* lightboxes;
+	bool* moved;
 
 private:
 	GLuint lightBuffer;

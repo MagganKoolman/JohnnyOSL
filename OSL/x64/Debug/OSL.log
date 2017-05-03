@@ -1,3 +1,3 @@
 ﻿  osl.cpp
-c:\users\emil\desktop\osl\johnnyosl\osl\osl.cpp(309): warning C4101: 'location': unreferenced local variable
+c:\users\emil\desktop\osl\johnnyosl\osl\osl.cpp(351): warning C4101: 'location': unreferenced local variable
   OSL.vcxproj -> C:\Users\Emil\Desktop\OSL\JohnnyOSL\x64\Debug\OSL.exe

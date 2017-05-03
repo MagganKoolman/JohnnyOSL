@@ -78,20 +78,19 @@ App::App() {
 	glfwSetKeyCallback(w, key_callback);
 	glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	oslstuff.init();
+	oslstuff.init(false, true);
 
 	sphereSize = 0;
 	oslstuff.sphere.va = createSphereVBO(20, 20);
 	oslstuff.sphere.size = sphereSize;
 	createSpheres();
-	oslstuff.createSphereTextures(24*12);
+	oslstuff.createSphereTextures(256);
 	oslstuff.spheres = sphereMatrices;
 	//oslstuff.sphere.diffuseTex = loadTexture("textures/daSphere.png");
 	oslstuff.cube.va = createCubeVBO();
 	oslstuff.cube.size = 36;
 	createCubes();
-	//oslstuff.createCubeTextures(24*12);
-	oslstuff.nrOfCubes = 24 * 12;
+	oslstuff.createCubeTextures(256);
 	oslstuff.cubes = cubeMatrices;
 }
 App::~App(){
@@ -322,9 +321,9 @@ void App::createCubes()
 	int index = 0;
 	glm::vec3 pos;
 	float radius = sqrtf(3)/2;
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 8; i++)
 	{
-		for (int j = 0; j < 12; j++) {
+		for (int j = 0; j < 16; j++) {
 			pos = glm::vec3(i * 2 * 2, -2, j * 2 * 2);
 			oslstuff.cubeInstances[index].hb.init(pos, radius);
 			oslstuff.cubeInstances[index].fixed = false;
@@ -332,24 +331,26 @@ void App::createCubes()
 		}
 	}
 
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 8; i++)
 	{
-		for (int j = 0; j < 12; j++) {
+		for (int j = 0; j < 16; j++) {
 			pos = glm::vec3(i * 2 * 2, 2, (j * 2 + 1) * 2);
 			oslstuff.cubeInstances[index].hb.init(pos, radius);
 			oslstuff.cubeInstances[index].fixed = false;
 			cubeMatrices[index++] = glm::translate(glm::mat4(1), pos);
 		}
 	}
+	oslstuff.updateLights(oslstuff.cubeInstances, 256);
 }
+
 
 void App::createSpheres()
 {
 	int index = 0;
 	glm::vec3 pos;
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 8; i++)
 	{
-		for (int j = 0; j < 12; j++) {
+		for (int j = 0; j < 16; j++) {
 			pos = glm::vec3(i*2*2, -2, (j*2+1)*2);
 			oslstuff.sphereInstances[index].hb.init(pos, 0.5f);
 			oslstuff.sphereInstances[index].fixed = false;
@@ -357,15 +358,16 @@ void App::createSpheres()
 		}
 	}
 
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 8; i++)
 	{
-		for (int j = 0; j < 12; j ++) {
+		for (int j = 0; j < 16; j ++) {
 			pos = glm::vec3(i * 2*2, 2, j *2* 2);
 			oslstuff.sphereInstances[index].hb.init(pos, 0.5f);
 			oslstuff.sphereInstances[index].fixed = false;
 			sphereMatrices[index++] = glm::translate(glm::mat4(1), pos);
 		}
 	}
+	oslstuff.updateLights(oslstuff.sphereInstances, 256);
 }
 
 GLuint App::loadTexture(std::string path)
@@ -454,7 +456,7 @@ void App::run() {
 		time = glfwGetTime();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glfwPollEvents();	
-		//controls(dt);
+		controls(dt);
 		oslstuff.render( camera.getViewProjection(), camera.cameraPos );
 		glfwSwapBuffers(w);
 		int a = glGetError();
@@ -462,7 +464,7 @@ void App::run() {
 			std::cout << glewGetErrorString(a) << std::endl;
 		}
 		totalFrames++;
-		runTime -= dt;
+		//runTime -= dt;
 		if (runTime <= 0.0)
 			running = false;
 		screenShotTimer -= dt;

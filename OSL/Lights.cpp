@@ -17,6 +17,7 @@ void Lights::update(GLuint programID, float dt)
 		allLights[i].position.x = i * 4 + cosf(i*timer);
 		allLights[i].position.z = i * 4 + sinf(i*timer);
 		lightboxes[i].position = glm::vec3(allLights[i].position);
+		moved[i] = true;
 	}
 	glBindBuffer(GL_UNIFORM_BUFFER, this->lightBuffer);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(aLight) * nrOfLight, this->allLights, GL_DYNAMIC_DRAW);
@@ -31,6 +32,7 @@ void Lights::init(GLuint programID, int nrOfLights)
 {
 	this->allLights = new aLight[nrOfLights];
 	this->lightboxes = new Hitbox[nrOfLights];
+	this->moved = new bool[nrOfLights];
 	GLint lightLoc = glGetUniformBlockIndex(programID, "Lights");
 	GLint blockSize;
 	glGetActiveUniformBlockiv(programID, lightLoc, GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
@@ -47,6 +49,8 @@ void Lights::init(GLuint programID, int nrOfLights)
 		this->allLights[i].position = glm::vec4(pos, 5);
 		this->allLights[i].colora = vec4(0.5, 0.5, 0.5, 1);
 		this->lightboxes[i].init(pos, 5);
+		this->moved[i] = true;
 	}
 	this->nrOfLight = nrOfLights;
+	update(programID, 0.f);
 }
