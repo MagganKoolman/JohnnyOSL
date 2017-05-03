@@ -57,6 +57,7 @@ void main(){
 			specular += pow(max(dot(eyeDir, vHalfVector),0.0), 20);
 		}
 	}
+	diffuse = max(diffuse, 0.0);
 	color = (0.2+diffuse+specular)*color; 
 	imageStore(destTex, storePos, color);
 }

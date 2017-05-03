@@ -221,40 +221,43 @@ void osl::createCubeTextures(int number) {
 int coutnerea = 0;
 void osl::render( glm::mat4 vp, glm::vec3 camPos, float dt )
 {
-	coutnerea++;
-	updateLights(sphereInstances, nrOfSpheres);
-	updateLights(cubeInstances, nrOfCubes);
 	//lights.update(oslprog, dt);
-	glUseProgram(oslprog);
-	glEnable(GL_TEXTURE_2D);
-	//glBindBuffer(GL_UNIFORM_BUFFER, this->indexBuffer);
-	setupShading(camPos, &sphere);
-	for (int i = 0; i < nrOfSpheres; i++) {
-		//if (coutnerea % (2*i+1) == 0)
-		if (sphereInstances[i].lightsAffecting > 0) {
-			updateShading(sphere, sphereInstances[i], spheres[i], i);
-			sphereInstances[i].fixed = false;
+	if (coutnerea == 0)
+	{
+		coutnerea++;
+		updateLights(sphereInstances, nrOfSpheres);
+		updateLights(cubeInstances, nrOfCubes);
+		glUseProgram(oslprog);
+		glEnable(GL_TEXTURE_2D);
+		//glBindBuffer(GL_UNIFORM_BUFFER, this->indexBuffer);
+		setupShading(camPos, &sphere);
+		for (int i = 0; i < nrOfSpheres; i++) {
+			//if (coutnerea % (2*i+1) == 0)
+			if (sphereInstances[i].lightsAffecting > 0) {
+				updateShading(sphere, sphereInstances[i], spheres[i], i);
+				sphereInstances[i].fixed = false;
+			}
+			else if (!sphereInstances[i].fixed) {
+				updateShading(sphere, sphereInstances[i], spheres[i], i);
+				sphereInstances[i].fixed = true;
+			}
 		}
-		else if (!sphereInstances[i].fixed) {
-			updateShading(sphere, sphereInstances[i], spheres[i], i);
-			sphereInstances[i].fixed = true;
+		setupShading(camPos, &cube);
+		for (int i = 0; i < nrOfCubes; i++) {
+			//if (coutnerea % (2*i+1) == 0)
+			if (cubeInstances[i].lightsAffecting > 0) {
+				updateShading(cube, cubeInstances[i], cubes[i], 288 + i);
+				cubeInstances[i].fixed = false;
+			}
+			else if (!cubeInstances[i].fixed) {
+				updateShading(cube, cubeInstances[i], cubes[i], 288 + i);
+				cubeInstances[i].fixed = true;
+			}
 		}
+		//glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		glUseProgram(0);
 	}
-	setupShading(camPos, &cube);
-	for (int i = 0; i < nrOfCubes; i++) {
-		//if (coutnerea % (2*i+1) == 0)
-		if (cubeInstances[i].lightsAffecting > 0){
-			updateShading(cube, cubeInstances[i], cubes[i], 288+i);
-			cubeInstances[i].fixed = false;
-		}
-		else if (!cubeInstances[i].fixed) {
-			updateShading(cube, cubeInstances[i], cubes[i], 288 + i);
-			cubeInstances[i].fixed = true;
-		}
-	}
-	//glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	glUseProgram(0);
-	glFinish();
+	//glFinish();
 	renderInstances(vp);
 }
 void osl::renderInstances(glm::mat4 vp) {
@@ -266,33 +269,26 @@ void osl::renderInstances(glm::mat4 vp) {
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
 
-	//GLuint location = glGetUniformLocation(oslForward, "viewProjection");
 	glUniformMatrix4fv(1, 1, GL_FALSE, &vp[0][0]);
 	glActiveTexture(GL_TEXTURE0);
-	//GLuint texLoc = glGetUniformLocation(oslForward, "diffTex");
 	glUniform1i(0, 0);
-	//location = glGetUniformLocation(oslForward, "world");
-	//GLuint iLoc = glGetUniformLocation(oslForward, "megaTexIndex");
 	glBindTexture(GL_TEXTURE_2D, megaTex);
 	for (int i = 0; i < nrOfSpheres; i++) {
 		glUniform1i(3, i);
 		glUniformMatrix4fv(2, 1, GL_FALSE, &spheres[i][0][0]);
-
 		glDrawArrays(GL_TRIANGLES, 0, sphere.size);
 	}
 
 	glBindVertexArray(cube.va);
 
-//	glBindTexture(GL_TEXTURE_2D, megaTex);
 	for (int i = 0; i < nrOfCubes; i++) {
 		glUniform1i(3, 288+i);
 		glUniformMatrix4fv(2, 1, GL_FALSE, &cubes[i][0][0]);
-
 		glDrawArrays(GL_TRIANGLES, 0, cube.size);
 	}
 
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glUseProgram(0);
+	//glBindTexture(GL_TEXTURE_2D, 0);
+	//glUseProgram(0);
 }
 
 void osl::setupShading(glm::vec3 &camPos, oslObject* obj) {

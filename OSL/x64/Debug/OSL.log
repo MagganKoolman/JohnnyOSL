@@ -1,6 +1,6 @@
-﻿  osl.cpp
-c:\users\maggan\documents\visual studio 2017\projects\osl\osl\osl.cpp(309): warning C4101: 'location': unreferenced local variable
-  Lights.cpp
-  Generating Code...
+﻿  App.cpp
+c:\users\maggan\documents\visual studio 2017\projects\osl\osl\app.cpp(103): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\maggan\documents\visual studio 2017\projects\osl\osl\app.cpp(104): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\maggan\documents\visual studio 2017\projects\osl\osl\app.cpp(176): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   OSL.vcxproj -> C:\Users\Maggan\Documents\Visual Studio 2017\Projects\OSL\x64\Debug\OSL.exe
   OSL.vcxproj -> C:\Users\Maggan\Documents\Visual Studio 2017\Projects\OSL\x64\Debug\OSL.pdb (Partial PDB)
