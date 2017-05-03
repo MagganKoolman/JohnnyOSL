@@ -48,7 +48,7 @@ class osl {
 		osl();
 		~osl();
 		void init(bool mode, bool resolution);
-		void render( glm::mat4 vp, glm::vec3 camPos);
+		void render( glm::mat4 vp, glm::vec3 camPos, float dt);
 		void renderInstances(glm::mat4 vp);
 		void updateShading(oslObject &object, oslInstance &instance, glm::mat4 &world, int index);
 		void generateTextures(GLuint sphereVa, int sphereSize, oslObject object);

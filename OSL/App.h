@@ -29,8 +29,8 @@ private:
 	osl oslstuff;
 	GLFWwindow* w;
 	Camera camera;
-	glm::mat4 cubeMatrices[25*25];
-	glm::mat4 sphereMatrices[25*25];
+	glm::mat4 cubeMatrices[12*24];
+	glm::mat4 sphereMatrices[12*24];
 
 	glm::vec3 movement = { 0,0,0 };
 public:
