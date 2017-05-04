@@ -43,23 +43,24 @@ void main(){
 
 	float diffuse = 0;
 	float specular = 0;
-
-	vec3 eyeDir;
-	vec3 vHalfVector;
+	float attunuation;
+	int index = 0;
 	vec3 lightpos;
-	vec3 diffuseVec;
-	for( int i = 0; i < nrOfLights; i++){
-		lightpos = lights[i].position.xyz;
-		if(length(lightpos - pos) < lights[i].position.w){  
-			diffuseVec = normalize(lightpos - pos);
+	for( int i = 0; i < activeLights; i++){
+		index = indices[i];
+		lightpos = lights[index].position.xyz;
+		if(length(lightpos - pos) < lights[index].position.w){  
+			vec3 diffuseVec = normalize(lightpos - pos);
 			diffuse += dot(diffuseVec, normal);
 
-			eyeDir = normalize(lightpos - camPos);
-			vHalfVector = reflect(diffuseVec, normal);
+			vec3 eyeDir = normalize(lightpos - camPos);
+			vec3 vHalfVector = reflect(diffuseVec, normal);
 			specular += pow(max(dot(eyeDir, vHalfVector),0.0), 20);
 		}
 	}
 	diffuse = max(diffuse, 0.0);
-	color = (0.2+diffuse+specular)*color; 
+	specular = max(specular, 0.0);
+	color = (0.2+diffuse+specular)*color; // diffuse+specular
+	//color = vec4(activeLights);
 	imageStore(destTex, storePos, color);
 }

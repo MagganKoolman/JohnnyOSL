@@ -457,7 +457,7 @@ void App::run() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glfwPollEvents();	
 		controls(dt);
-		oslstuff.render( camera.getViewProjection(), camera.cameraPos, 0.05f);
+		oslstuff.render( camera.getViewProjection(), camera.cameraPos, 0.00f);
 		glfwSwapBuffers(w);
 		int a = glGetError();
 		if (a) {
@@ -470,6 +470,11 @@ void App::run() {
 		screenShotTimer -= 0.05f;
 		if (screenShotTimer < 0)
 		{
+			for (int i = 0; i < oslstuff.nrOfLights; i++) {
+				glm::vec3 a = oslstuff.lights.allLights[i].position;
+				std::cout << a.x << ", " << a.y << ", " << a.z << "\n";
+			}
+
 			saveFrameToFile(nrOfScreenShots++);
 			screenShotTimer = 60000;
 		}

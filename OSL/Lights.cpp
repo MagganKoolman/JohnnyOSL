@@ -52,5 +52,5 @@ void Lights::init(GLuint programID, int nrOfLights)
 		this->moved[i] = true;
 	}
 	this->nrOfLight = nrOfLights;
-	update(programID, 0.05f);
+	update(programID, 0.00f);
 }

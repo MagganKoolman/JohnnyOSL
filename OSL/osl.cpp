@@ -247,15 +247,16 @@ void osl::createCubeTextures(int number) {
 int coutnerea = 0;
 void osl::render( glm::mat4 vp, glm::vec3 camPos, float dt )
 {
-	//lights.update(oslprog, dt);
 	if (coutnerea == 0)
 	{
-	coutnerea++;
-	if (dynamic) {
-	updateLights(sphereInstances, nrOfSpheres);
-	updateLights(cubeInstances, nrOfCubes);
+		coutnerea++;
 	}
-	lights.update(oslprog, 0.05f);
+	if (dynamic) {
+		updateLights(sphereInstances, nrOfSpheres);
+		updateLights(cubeInstances, nrOfCubes);
+		lights.update(oslprog, dt);
+	}
+	//lights.update(oslprog, 0.05f);
 	glUseProgram(oslprog);
 	glEnable(GL_TEXTURE_2D);
 	//glBindBuffer(GL_UNIFORM_BUFFER, this->indexBuffer);
@@ -265,8 +266,8 @@ void osl::render( glm::mat4 vp, glm::vec3 camPos, float dt )
 		if (sphereInstances[i].lightsAffecting > 0) {
 			updateShading(sphere, sphereInstances[i], spheres[i], i);
 			if (dynamic) {
-			sphereInstances[i].fixed = false;
-		}
+				sphereInstances[i].fixed = false;
+			}
 			else{
 				sphereInstances[i].lightsAffecting = 0;
 				sphereInstances[i].fixed = true;
@@ -297,7 +298,6 @@ void osl::render( glm::mat4 vp, glm::vec3 camPos, float dt )
 	}
 	//glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	glUseProgram(0);
-	}
 	//glFinish();
 	renderInstances(vp);
 }
