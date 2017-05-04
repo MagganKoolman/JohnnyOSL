@@ -9,14 +9,26 @@ Lights::~Lights()
 {
 	delete[] allLights;
 }
-
+glm::vec3 prePositions[10] = {
+	{0,0,0},
+	{5,5,0},
+	{13,0,0},
+	{20,5,0},
+	{3,5,8},
+	{6,2,22},
+	{7,5,27},
+	{15,5,10},
+	{20,3,17},
+	{25,0,25}
+};
 void Lights::update(GLuint programID, float dt)
 {
 	timer += dt;
+	glm::vec3 temppos;
 	for (int i = 0; i < nrOfLight; i++) {
-		allLights[i].position.x = i * 4 + cosf(i*timer);
-		allLights[i].position.z = i * 4 + sinf(i*timer);
-		lightboxes[i].position = glm::vec3(allLights[i].position);
+		temppos = prePositions[i] + vec3(2 * cosf(timer), 0, 2*sinf(timer));
+		allLights[i].position = vec4(temppos, 5);
+		lightboxes[i].position = temppos;
 		moved[i] = true;
 	}
 	glBindBuffer(GL_UNIFORM_BUFFER, this->lightBuffer);

@@ -78,7 +78,7 @@ App::App() {
 	glfwSetKeyCallback(w, key_callback);
 	glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	oslstuff.init(false, true);
+	oslstuff.init(true, true);
 
 	sphereSize = 0;
 	oslstuff.sphere.va = createSphereVBO(20, 20);
@@ -321,24 +321,26 @@ void App::createCubes()
 	int index = 0;
 	glm::vec3 pos;
 	float radius = sqrtf(3)/2;
-	for (int i = 0; i < 8; i++)
-	{
-		for (int j = 0; j < 16; j++) {
-			pos = glm::vec3(i * 2 * 2, -2, j * 2 * 2);
-			oslstuff.cubeInstances[index].hb.init(pos, radius);
-			oslstuff.cubeInstances[index].fixed = false;
-			cubeMatrices[index++] = glm::translate(glm::mat4(1), pos);
+	for (int y = 0; y < 4; y++) {
+		for (int i = 0; i < 8; i++)
+		{
+			for (int j = 0; j < 8; j++) {
+				pos = glm::vec3(i * 2 * 2, y*2, j * 2 * 2);
+				oslstuff.cubeInstances[index].hb.init(pos, radius);
+				oslstuff.cubeInstances[index].fixed = false;
+				cubeMatrices[index++] = glm::translate(glm::mat4(1), pos);
+			}
 		}
-	}
 
-	for (int i = 0; i < 8; i++)
-	{
-		for (int j = 0; j < 16; j++) {
-			pos = glm::vec3(i * 2 * 2, 2, (j * 2 + 1) * 2);
-			oslstuff.cubeInstances[index].hb.init(pos, radius);
-			oslstuff.cubeInstances[index].fixed = false;
-			cubeMatrices[index++] = glm::translate(glm::mat4(1), pos);
-		}
+		/*for (int i = 0; i < 8; i++)
+		{
+			for (int j = 0; j < 16; j++) {
+				pos = glm::vec3(i * 2 * 2, 2, (j * 2 + 1) * 2);
+				oslstuff.cubeInstances[index].hb.init(pos, radius);
+				oslstuff.cubeInstances[index].fixed = false;
+				cubeMatrices[index++] = glm::translate(glm::mat4(1), pos);
+			}
+		}*/
 	}
 	oslstuff.updateLights(oslstuff.cubeInstances, 256);
 }
@@ -348,17 +350,18 @@ void App::createSpheres()
 {
 	int index = 0;
 	glm::vec3 pos;
-	for (int i = 0; i < 8; i++)
-	{
-		for (int j = 0; j < 16; j++) {
-			pos = glm::vec3(i*2*2, -2, (j*2+1)*2);
-			oslstuff.sphereInstances[index].hb.init(pos, 0.5f);
-			oslstuff.sphereInstances[index].fixed = false;
-			sphereMatrices[index++] = glm::translate(glm::mat4(1), pos);
+	for (int y = 0; y < 4; y++) {
+		for (int i = 0; i < 8; i++)
+		{
+			for (int j = 0; j < 8; j++) {
+				pos = glm::vec3(i * 2 * 2, y*2, (j * 2 + 1) * 2);
+				oslstuff.sphereInstances[index].hb.init(pos, 0.5f);
+				oslstuff.sphereInstances[index].fixed = false;
+				sphereMatrices[index++] = glm::translate(glm::mat4(1), pos);
+			}
 		}
 	}
-
-	for (int i = 0; i < 8; i++)
+	/*for (int i = 0; i < 8; i++)
 	{
 		for (int j = 0; j < 16; j ++) {
 			pos = glm::vec3(i * 2*2, 2, j *2* 2);
@@ -366,7 +369,7 @@ void App::createSpheres()
 			oslstuff.sphereInstances[index].fixed = false;
 			sphereMatrices[index++] = glm::translate(glm::mat4(1), pos);
 		}
-	}
+	}*/
 	oslstuff.updateLights(oslstuff.sphereInstances, 256);
 }
 
@@ -457,7 +460,7 @@ void App::run() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glfwPollEvents();	
 		controls(dt);
-		oslstuff.render( camera.getViewProjection(), camera.cameraPos, 0.00f);
+		oslstuff.render( camera.getViewProjection(), camera.cameraPos, 0.05f);
 		glfwSwapBuffers(w);
 		int a = glGetError();
 		if (a) {
