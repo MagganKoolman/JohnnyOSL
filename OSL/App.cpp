@@ -78,15 +78,13 @@ App::App() {
 	glfwSetKeyCallback(w, key_callback);
 	glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	oslstuff.init(true, true);
-
+	oslstuff.init(false, true);
 	sphereSize = 0;
 	oslstuff.sphere.va = createSphereVBO(20, 20);
 	oslstuff.sphere.size = sphereSize;
 	createSpheres();
 	oslstuff.createSphereTextures(256);
 	oslstuff.spheres = sphereMatrices;
-	//oslstuff.sphere.diffuseTex = loadTexture("textures/daSphere.png");
 	oslstuff.cube.va = createCubeVBO();
 	oslstuff.cube.size = 36;
 	createCubes();
@@ -105,7 +103,6 @@ GLuint App::createSphereVBO(int xRes, int yRes) {
 
 	std::vector<vtxData> data;
 	data.resize(xRes * (yRes+1));
-	//vtxData* data = new vtxData[];
 	float x, y, z;
 	for (int i = 0; i < yRes + 1; i++)
 	{
@@ -128,7 +125,6 @@ GLuint App::createSphereVBO(int xRes, int yRes) {
 	std::vector<face> faceData;
 	vtxData t = { 1,1,1,1,1,1,1,1 };
 	faceData.resize(2 * xRes*yRes, { t,t,t });
-	//face* faceData = new face[2*newRes*(newRes/2+1)];
 	for (int i = 0; i < yRes-1; i++) {
 		for (int j = 0; j < xRes; j++) {
 			int a = i*xRes + j;
@@ -176,7 +172,6 @@ GLuint App::createSphereVBO(int resolution)
 	float increment = (3.1415 * 2)/resolution;
 	std::vector<vtxData> data;
 	data.resize(resolution*(resolution/2+1));
-	//vtxData* data = new vtxData[];
 	float x, y, z;
 	for (int i = 0; i < resolution/2+1; i++)
 	{
@@ -199,7 +194,6 @@ GLuint App::createSphereVBO(int resolution)
 	std::vector<face> faceData;
 	vtxData t = { 1,1,1,1,1,1,1,1 };
 	faceData.resize(2 * newRes*(newRes / 2 + 1) + 10, {t,t,t});
-	//face* faceData = new face[2*newRes*(newRes/2+1)];
 	for (int i = 0; i < newRes/2; i++) {
 		for (int j = 0; j < newRes; j++) {
 			int a = i*newRes + j;
@@ -326,22 +320,12 @@ void App::createCubes()
 		for (int i = 0; i < 8; i++)
 		{
 			for (int j = 0; j < 8; j++) {
-				pos = glm::vec3(i * 2 * 2, y*2, j * 2 * 2);
+				pos = glm::vec3(i * 2 * 2, y * 2, j * 2 * 2);
 				oslstuff.cubeInstances[index].hb.init(pos, radius);
 				oslstuff.cubeInstances[index].fixed = false;
 				cubeMatrices[index++] = glm::translate(glm::mat4(1), pos);
 			}
 		}
-
-		/*for (int i = 0; i < 8; i++)
-		{
-			for (int j = 0; j < 16; j++) {
-				pos = glm::vec3(i * 2 * 2, 2, (j * 2 + 1) * 2);
-				oslstuff.cubeInstances[index].hb.init(pos, radius);
-				oslstuff.cubeInstances[index].fixed = false;
-				cubeMatrices[index++] = glm::translate(glm::mat4(1), pos);
-			}
-		}*/
 	}
 	oslstuff.updateLights(oslstuff.cubeInstances, 256);
 }
@@ -362,15 +346,6 @@ void App::createSpheres()
 			}
 		}
 	}
-	/*for (int i = 0; i < 8; i++)
-	{
-		for (int j = 0; j < 16; j ++) {
-			pos = glm::vec3(i * 2*2, 2, j *2* 2);
-			oslstuff.sphereInstances[index].hb.init(pos, 0.5f);
-			oslstuff.sphereInstances[index].fixed = false;
-			sphereMatrices[index++] = glm::translate(glm::mat4(1), pos);
-		}
-	}*/
 	oslstuff.updateLights(oslstuff.sphereInstances, 256);
 }
 
@@ -421,7 +396,7 @@ void App::saveFrameToFile(int nr)
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 	glReadPixels(0, 0, Camera::SCREEN_WIDTH, Camera::SCREEN_HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, &imgData[0]);
 
-	std::string path = "../results/imgOSL" + std::to_string(nr) + ".png";
+	std::string path = "../../results/imgOSL" + std::to_string(nr) + ".bmp";
 	int err = SOIL_save_image
 	(
 		path.c_str(),
@@ -443,7 +418,7 @@ void App::controls(float dt)
 }
 
 void App::run() {
-	glClearColor(1.0, 0.0, 1.0, 1.0);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glfwGetCursorPos(w, &lastx, &lasty);
 	double time, dt;
 	time = 0.0;
@@ -453,9 +428,18 @@ void App::run() {
 	double screenShotTimer = 2;
 	int nrOfScreenShots = 0;
 	int totalFrames = 0;
+	int everyXFrame = 10000;
 	glfwSwapInterval(0);
-
 	glfwSetTime(time);
+
+	if (!oslstuff.dynamic)
+	{
+		oslstuff.dynamic = true;
+		oslstuff.render(camera.getViewProjection(), camera.cameraPos, 0.0f);
+		oslstuff.dynamic = false;
+		everyXFrame = 30000;
+		nrOfScreenShots = 9;
+	}
 	while(!glfwWindowShouldClose(w) && running){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glfwPollEvents();	
@@ -469,13 +453,13 @@ void App::run() {
 		totalFrames++;
 		if (totalFrames == 50000)
 			running = false;
-		if (totalFrames % 10000 == 0)
+		if (totalFrames % everyXFrame == 0)
 		{
 			saveFrameToFile(nrOfScreenShots++);
 		}
 	}
 	time = glfwGetTime();
-	std::ofstream logFile("../results/logOSL.txt");
+	std::ofstream logFile("../../results/logOSL.txt");
 	logFile << time << "\n";
 	logFile.close();
 }

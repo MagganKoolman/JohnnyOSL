@@ -61,6 +61,5 @@ void main(){
 	diffuse = max(diffuse, 0.0);
 	specular = max(specular, 0.0);
 	color = (0.2+diffuse+specular)*color; // diffuse+specular
-	//color = vec4(activeLights);
 	imageStore(destTex, storePos, color);
 }
