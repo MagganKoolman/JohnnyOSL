@@ -212,7 +212,6 @@ void osl::updateLights(oslInstance* instance, int number)
 }
 
 void osl::createSphereTextures(int number) {
-	//for (int i = 0; i < number; i++) {
 	glGenTextures(1, &sphere.megaTex);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sphere.megaTex);
@@ -353,20 +352,12 @@ void osl::initDesync(glm::vec3 camPos)
 }
 void osl::updateShading( oslObject &object, oslInstance &instance, glm::mat4 &world, int index) {
 	float lightPos[3] = { 1.f, 0.f, 1.5f };
-	GLuint location;
-	//glBufferData(GL_UNIFORM_BUFFER, sizeof(int) * 10, instance.lights, GL_DYNAMIC_DRAW);
-
-	//GLint indexLoc = glGetUniformLocation(oslprog, "indices");
 	glUniform1iv(7, 10, instance.lights);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 7, this->indexBuffer);
 
-	//location = glGetUniformLocation(oslprog, "activeLights");
 	glUniform1i(6, instance.lightsAffecting);
 
-	//location = glGetUniformLocation(oslprog, "camPos");
-	//location = glGetUniformLocation(oslprog, "world");
 	glUniformMatrix4fv(2, 1, GL_FALSE, &world[0][0]);
-	//location = glGetUniformLocation(oslprog, "megaSphereTexIndex");
+
 	glUniform1i(5, index);
 
 
@@ -377,17 +368,10 @@ void osl::generateTextures(GLuint va, int size, oslObject object)
 	glUseProgram(textureGenProg);
 	glBindVertexArray(va);
 	glEnable(GL_TEXTURE_2D);
-	/*GLuint location = glGetUniformLocation(textureGenProg, "positionTex");
-	glUniform1i(location, sphere.positionTex);
-	location = glGetUniformLocation(textureGenProg, "normalTex");
-	glUniform1i(location, sphere.normalTex);*/
 	
 	glBindImageTexture(0, object.positionTex,	0,	GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 	glBindImageTexture(1, object.normalTex,		0,	GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 	glBindImageTexture(2, lockTex,				0,	GL_FALSE, 0, GL_READ_WRITE, GL_R32UI);
-
-	//GLuint a[2] = { sphere.normalTex, sphere.positionTex };
-	//glBindTextures(0, 2, a);
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);

@@ -421,9 +421,10 @@ void App::saveFrameToFile(int nr)
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 	glReadPixels(0, 0, Camera::SCREEN_WIDTH, Camera::SCREEN_HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, &imgData[0]);
 
+	std::string path = "../results/imgOSL" + std::to_string(nr) + ".png";
 	int err = SOIL_save_image
 	(
-		"C:/Users/Maggan/Desktop/bilder/imgOSL.bmp",
+		path.c_str(),
 		SOIL_SAVE_TYPE_BMP,
 		Camera::SCREEN_WIDTH, Camera::SCREEN_HEIGHT, 3,
 		&imgData[0]
@@ -446,7 +447,6 @@ void App::run() {
 	glfwGetCursorPos(w, &lastx, &lasty);
 	double time, dt;
 	time = 0.0;
-	glfwSetTime(time);
 	oslstuff.generateTextures(cubeVa, 36, oslstuff.cube);
 	oslstuff.generateTextures(sphereVa, sphereSize, oslstuff.sphere);
 	double runTime = 5;
@@ -455,36 +455,28 @@ void App::run() {
 	int totalFrames = 0;
 	glfwSwapInterval(0);
 
+	glfwSetTime(time);
 	while(!glfwWindowShouldClose(w) && running){
-		dt = glfwGetTime() - time;
-		time = glfwGetTime();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glfwPollEvents();	
 		//controls(dt);
-		oslstuff.render( camera.getViewProjection(), camera.cameraPos, 0.05f);
+		oslstuff.render( camera.getViewProjection(), camera.cameraPos, 0.005f);
 		glfwSwapBuffers(w);
 		int a = glGetError();
 		if (a) {
 			std::cout << glewGetErrorString(a) << std::endl;
 		}
 		totalFrames++;
-		runTime -= dt;
-		if (runTime <= 0.0)
+		if (totalFrames == 50000)
 			running = false;
-		screenShotTimer -= 0.05f;
-		if (screenShotTimer < 0)
+		if (totalFrames % 10000 == 0)
 		{
-			for (int i = 0; i < oslstuff.nrOfLights; i++) {
-				glm::vec3 a = oslstuff.lights.allLights[i].position;
-				std::cout << a.x << ", " << a.y << ", " << a.z << "\n";
-			}
-
 			saveFrameToFile(nrOfScreenShots++);
-			screenShotTimer = 60000;
 		}
 	}
-	std::ofstream logFile("log.txt");
-	logFile << totalFrames << "\n";
+	time = glfwGetTime();
+	std::ofstream logFile("../results/logOSL.txt");
+	logFile << time << "\n";
 	logFile.close();
 }
 
