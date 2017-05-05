@@ -92,6 +92,7 @@ App::App() {
 	createCubes();
 	oslstuff.createCubeTextures(256);
 	oslstuff.cubes = cubeMatrices;
+	oslstuff.initDesync(camera.cameraPos);
 }
 App::~App(){
 
@@ -459,7 +460,7 @@ void App::run() {
 		time = glfwGetTime();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glfwPollEvents();	
-		controls(dt);
+		//controls(dt);
 		oslstuff.render( camera.getViewProjection(), camera.cameraPos, 0.05f);
 		glfwSwapBuffers(w);
 		int a = glGetError();
@@ -467,7 +468,7 @@ void App::run() {
 			std::cout << glewGetErrorString(a) << std::endl;
 		}
 		totalFrames++;
-		//runTime -= dt;
+		runTime -= dt;
 		if (runTime <= 0.0)
 			running = false;
 		screenShotTimer -= 0.05f;

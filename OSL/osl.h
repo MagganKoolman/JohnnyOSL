@@ -19,6 +19,8 @@ class osl {
 		int32_t lights[10];
 		int lightsAffecting;
 		bool fixed;
+		int interval;
+		int counter;
 	};
 
 	
@@ -57,4 +59,5 @@ class osl {
 		void createTextures(oslObject* obj, std::string path);
 		void updateLights(oslInstance* instance, int number);
 		void setupShading(glm::vec3 &camPos, oslObject* obj);
+		void initDesync(glm::vec3 camPos);
 };

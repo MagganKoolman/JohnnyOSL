@@ -1,5 +1,7 @@
 ﻿  osl.cpp
-c:\users\emil\desktop\osl\johnnyosl\osl\osl.cpp(337): warning C4101: 'location': unreferenced local variable
+c:\users\emil\desktop\osl\johnnyosl\osl\osl.cpp(346): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\emil\desktop\osl\johnnyosl\osl\osl.cpp(350): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\emil\desktop\osl\johnnyosl\osl\osl.cpp(356): warning C4101: 'location': unreferenced local variable
   Lights.cpp
   Generating Code...
   OSL.vcxproj -> C:\Users\Emil\Desktop\OSL\JohnnyOSL\x64\Debug\OSL.exe

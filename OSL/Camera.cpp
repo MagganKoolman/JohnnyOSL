@@ -3,8 +3,8 @@
 
 Camera::Camera()
 {
-	this->cameraPos = { 24.0, 52.0, 30.0 };
-	this->cameraDir = { 0.0, -0.9, -0.07 };
+	this->cameraPos = { 40.0, 20.0, 12.0 };
+	this->cameraDir = { -0.707, -0.707, -0.0 };
 	this->cameraRight = cross(vec3(0.0, 1.0, 0.0), this->cameraDir);
 
 	this->view = glm::lookAt(this->cameraPos,

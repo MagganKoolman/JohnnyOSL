@@ -6,7 +6,7 @@ layout(binding = 2, rgba32f) uniform image2D srcTex;
 layout(binding = 3, rgba32f) uniform image2D destTex;
 
 
-layout(local_size_x = 8, local_size_y = 8) in;
+layout(local_size_x = 16, local_size_y = 16) in;
 
 layout(location = 1) uniform vec3 camPos;
 layout(location = 2) uniform mat4 world;

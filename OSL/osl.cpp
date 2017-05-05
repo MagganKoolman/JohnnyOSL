@@ -3,6 +3,8 @@
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
 #include "src\SOIL.h"
+#include <iostream>
+
 
 void printshaderError(GLuint shader) {
 	int success = 0;
@@ -256,36 +258,42 @@ void osl::render( glm::mat4 vp, glm::vec3 camPos, float dt )
 	glEnable(GL_TEXTURE_2D);
 	setupShading(camPos, &sphere);
 	for (int i = 0; i < nrOfSpheres; i++) {
-		if (sphereInstances[i].lightsAffecting > 0) {
-			updateShading(sphere, sphereInstances[i], spheres[i], i);
-			if (dynamic) {
-				sphereInstances[i].fixed = false;
+		if (--sphereInstances[i].counter <= 0) {
+			sphereInstances[i].counter = sphereInstances[i].interval;
+			if (sphereInstances[i].lightsAffecting > 0) {
+				updateShading(sphere, sphereInstances[i], spheres[i], i);
+				if (dynamic) {
+					sphereInstances[i].fixed = false;
+				}
+				else {
+					sphereInstances[i].lightsAffecting = 0;
+					sphereInstances[i].fixed = true;
+				}
 			}
-			else{
-				sphereInstances[i].lightsAffecting = 0;
+			else if (!sphereInstances[i].fixed) {
+				updateShading(sphere, sphereInstances[i], spheres[i], i);
 				sphereInstances[i].fixed = true;
 			}
-		}
-		else if (!sphereInstances[i].fixed) {
-			updateShading(sphere, sphereInstances[i], spheres[i], i);
-			sphereInstances[i].fixed = true;
 		}
 	}
 	setupShading(camPos, &cube);
 	for (int i = 0; i < nrOfCubes; i++) {
-		if (cubeInstances[i].lightsAffecting > 0) {
-			updateShading(cube, cubeInstances[i], cubes[i], i);
-			if (dynamic) {
-				cubeInstances[i].fixed = false;
+		if (--cubeInstances[i].counter <= 0) {
+			cubeInstances[i].counter = cubeInstances[i].interval;
+			if (cubeInstances[i].lightsAffecting > 0) {
+				updateShading(cube, cubeInstances[i], cubes[i], i);
+				if (dynamic) {
+					cubeInstances[i].fixed = false;
+				}
+				else {
+					cubeInstances[i].lightsAffecting = 0;
+					cubeInstances[i].fixed = true;
+				}
 			}
-			else {
-				cubeInstances[i].lightsAffecting = 0;
+			else if (!cubeInstances[i].fixed) {
+				updateShading(cube, cubeInstances[i], cubes[i], i);
 				cubeInstances[i].fixed = true;
 			}
-		}
-		else if (!cubeInstances[i].fixed) {
-			updateShading(cube, cubeInstances[i], cubes[i], i);
-			cubeInstances[i].fixed = true;
 		}
 	}
 	glUseProgram(0);
@@ -332,6 +340,17 @@ void osl::setupShading(glm::vec3 &camPos, oslObject* obj) {
 	glUniform1i(4, shaderResInput[0]);
 	glUniform3fv(1, 1, &camPos[0]);
 }
+void osl::initDesync(glm::vec3 camPos)
+{
+	for (int i = 0; i < nrOfSpheres; i++) {
+		sphereInstances[i].interval = 1 + (glm::length(camPos - sphereInstances[i].hb.position) / 20);
+		sphereInstances[i].counter = 1;
+	}
+	for (int i = 0; i < nrOfCubes; i++) {
+		cubeInstances[i].interval = 1 + (glm::length(camPos - cubeInstances[i].hb.position) / 20);
+		cubeInstances[i].counter = 1;
+	}
+}
 void osl::updateShading( oslObject &object, oslInstance &instance, glm::mat4 &world, int index) {
 	float lightPos[3] = { 1.f, 0.f, 1.5f };
 	GLuint location;
@@ -351,7 +370,7 @@ void osl::updateShading( oslObject &object, oslInstance &instance, glm::mat4 &wo
 	glUniform1i(5, index);
 
 
-	glDispatchCompute(textureRes / 8, textureRes / 8, 1);
+	glDispatchCompute(textureRes / 16, textureRes / 16, 1);
 }
 void osl::generateTextures(GLuint va, int size, oslObject object)
 {
