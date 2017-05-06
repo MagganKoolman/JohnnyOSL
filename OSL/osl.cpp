@@ -316,25 +316,19 @@ void osl::setupShading(glm::vec3 &camPos, oslObject* obj) {
 void osl::initDesync(glm::vec3 camPos)
 {
 	for (int i = 0; i < nrOfSpheres; i++) {
-		sphereInstances[i].interval = 1 + (glm::length(camPos - sphereInstances[i].hb.position) / 20);
+		sphereInstances[i].interval = 1 +(glm::length(camPos - sphereInstances[i].hb.position) / 20);
 		sphereInstances[i].counter = 1;
 	}
 	for (int i = 0; i < nrOfCubes; i++) {
-		cubeInstances[i].interval = 1 + (glm::length(camPos - cubeInstances[i].hb.position) / 20);
+		cubeInstances[i].interval = 1 +(glm::length(camPos - cubeInstances[i].hb.position) / 20);
 		cubeInstances[i].counter = 1;
 	}
 }
 void osl::updateShading( oslObject &object, oslInstance &instance, glm::mat4 &world, int index) {
-	float lightPos[3] = { 1.f, 0.f, 1.5f };
-	glUniform1iv(7, 10, instance.lights);
-
-	glUniform1i(6, instance.lightsAffecting);
-
 	glUniformMatrix4fv(2, 1, GL_FALSE, &world[0][0]);
-
+	glUniform1iv(7, 10, instance.lights);
+	glUniform1i(6, instance.lightsAffecting);
 	glUniform1i(5, index);
-
-
 	glDispatchCompute(textureRes / 16, textureRes / 16, 1);
 }
 void osl::generateTextures(GLuint va, int size, oslObject object)
