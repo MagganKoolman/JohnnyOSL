@@ -35,10 +35,11 @@ private:
 	glm::vec3 movement = { 0,0,0 };
 	int runTime;
 	int everyXFrame;
+	int instanceID;
 	std::string resultPath;
 public:
 	App();
-	App(bool mode, int runTime, int shotRate, std::string path);
+	App(bool mode, int runTime, int shotRate, int instanceNumber, std::string path);
 	~App();
 	void run();
 	GLuint createSphereVBO(int xRes, int yRes);
