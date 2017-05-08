@@ -59,7 +59,7 @@ void App::updateInputs() {
 App::App(){
 }
 
-App::App(bool mode, int runTime, int shotRate, int instanceNumber, std::string path) {
+App::App(bool mode, int runTime, int shotRate, int instanceNumber, std::string path, int asyncer) {
 	this->runTime = runTime;
 	this->everyXFrame = shotRate;
 	this->resultPath = path;
@@ -79,7 +79,7 @@ App::App(bool mode, int runTime, int shotRate, int instanceNumber, std::string p
 	glfwSetKeyCallback(w, key_callback);
 	glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	oslstuff.init(mode, true);
+	oslstuff.init(mode, true, asyncer);
 	sphereSize = 0;
 	oslstuff.sphere.va = createSphereVBO(20, 20);
 	oslstuff.sphere.size = sphereSize;
@@ -458,7 +458,7 @@ void App::run() {
 	time = glfwGetTime();
 	std::ofstream logFile;
 	logFile.open(this->resultPath + "/logOSL.txt", std::ios_base::app);
-	logFile << time << " " << oslstuff.dynamic << " " << this->instanceID << "\n";
+	logFile << time << " " << oslstuff.dynamic << " " << this->instanceID << " " << oslstuff.asyncer << "\n";
 	logFile.close();
 }
 

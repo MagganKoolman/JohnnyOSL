@@ -39,7 +39,7 @@ private:
 	std::string resultPath;
 public:
 	App();
-	App(bool mode, int runTime, int shotRate, int instanceNumber, std::string path);
+	App(bool mode, int runTime, int shotRate, int instanceNumber, std::string path, int asyncer);
 	~App();
 	void run();
 	GLuint createSphereVBO(int xRes, int yRes);

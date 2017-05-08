@@ -10,7 +10,8 @@ int main(int argc, char* argv[])
 	int shotRate = 9000;
 	int instanceNumber = -1;
 	string destFolder = "";
-	if (argc == 6)
+	int asyncThing = 1;
+	if (argc == 7)
 	{
 		std::stringstream ss(argv[1]);
 		ss >> std::boolalpha >> mode;
@@ -18,8 +19,9 @@ int main(int argc, char* argv[])
 		shotRate = atoi(argv[3]);
 		instanceNumber = atoi(argv[4]);
 		destFolder = argv[5];
+		asyncThing = atoi(argv[6]);
 	}
-	App app(mode, runTime, shotRate, instanceNumber, destFolder);
+	App app(mode, runTime, shotRate, instanceNumber, destFolder, asyncThing);
 	app.run();
 
 	return 0;

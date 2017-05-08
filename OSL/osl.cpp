@@ -31,7 +31,8 @@ void printprogramError(GLuint program) {
 		std::printf("%s\n", &(errorLog[0]));
 	}
 }
-void osl::init( bool mode, bool resolution ) {
+void osl::init( bool mode, bool resolution, int asyncer ) {
+	this->asyncer = asyncer;
 	if (resolution) {
 		textureRes = 256;
 		shaderResInput[0] = 16;
@@ -316,11 +317,11 @@ void osl::setupShading(glm::vec3 &camPos, oslObject* obj) {
 void osl::initDesync(glm::vec3 camPos)
 {
 	for (int i = 0; i < nrOfSpheres; i++) {
-		sphereInstances[i].interval = 1 +(glm::length(camPos - sphereInstances[i].hb.position) / 20);
+		sphereInstances[i].interval = 1 +(glm::length(camPos - sphereInstances[i].hb.position) / asyncer);
 		sphereInstances[i].counter = 1;
 	}
 	for (int i = 0; i < nrOfCubes; i++) {
-		cubeInstances[i].interval = 1 +(glm::length(camPos - cubeInstances[i].hb.position) / 20);
+		cubeInstances[i].interval = 1 +(glm::length(camPos - cubeInstances[i].hb.position) / asyncer);
 		cubeInstances[i].counter = 1;
 	}
 }
